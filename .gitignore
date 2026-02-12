@@ -1,1 +1,8 @@
-node_modules
+# Project place file
+/fullstack_project.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+sourcemap.json
