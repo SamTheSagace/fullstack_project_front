@@ -1,13 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Modules = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Modules"))
-
-local Hello = Modules.require("Hello")
-local Users = Modules.require("Api.Users")
-
-Hello()
+local Users = require(ReplicatedStorage.Shared.Api.Users)
 
 Users()
 
 print("Hello world, from server!")
-
-
