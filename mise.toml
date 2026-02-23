@@ -1,4 +1,4 @@
 [tools]
 "github:JohnnyMorganz/wally-package-types" = "latest"
 "github:UpliftGames/wally" = "latest"
-"github:rojo-rbx/rojo" = "latest"
+"github:rojo-rbx/rojo" = "7.7.0-rc.1"
