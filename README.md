@@ -34,3 +34,26 @@ To deploy your place to Roblox, you can use the `rojo upload` command.
 If you are on Windows and have Roblox Studio installed, --cookie is optional and will be pulled from your Roblox Studio session if not specified.
 
 For more help, check out [the Rojo documentation](https://rojo.space/docs).
+
+## Usage
+
+In this section, we will discuss how to use snippets and reference code files within your project.
+
+### Snippets
+This project includes a set of code snippets defined in the `luau.code-snippets` file located in the `.vscode` directory. These snippets are designed to help you quickly insert commonly used code patterns into your scripts.
+
+For example, `reqsh` is a snippet that allows you to quickly require a module from the `shared` folder in `ReplicatedStorage`. Similarly, ``reqsv`` is a snippet for requiring modules from the `ServerScriptService.Server` folder.
+
+### Referencing Code Files
+To call a module script from the `shared` folder in your server scripts, you can use the following pattern:
+
+```lua
+local MyModule = require(game:GetService("ReplicatedStorage"):WaitForChild("shared"):WaitForChild("MyModule"))
+```
+or use the snippet `modsh` to quickly insert the Modules importer, then call the module like this:
+
+```lua
+local MyModule = Modules.require("MyModule")
+--- or for nested modules:
+local MyNestedModule = Modules.require("FolderName.MyNestedModule")
+```
