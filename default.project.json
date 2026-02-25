@@ -4,12 +4,14 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "$path": "src/ReplicatedStorage",
+      "Api": {
+        "$path": "src/ReplicatedStorage/Api"
+      },
       "Shared": {
         "$path": "src/ReplicatedStorage/Shared"
       },
-      "Api": {
-        "$path": "src/ReplicatedStorage/Api"
+      "Types": {
+        "$path": "src/ReplicatedStorage/Types"
       },
       "Packages": {
         "$path": ".wallyPackages/Packages"
@@ -17,9 +19,8 @@
     },
 
     "ServerScriptService": {
-      "$path": "src/ServerScriptService",
-      "Server": {
-        "$path": "src/ServerScriptService/Server"
+      "Server": { 
+        "$path": "src/ServerScriptService/Server" 
       },
       "ServerPackages": {
         "$path": ".wallyPackages/ServerPackages"
@@ -28,10 +29,14 @@
 
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "$path": "src/StarterPlayerScripts",
         "Client": {
           "$path": "src/StarterPlayerScripts/Client"
         }
+      }
+    },
+    "StarterGui": {
+      "GUI": {
+        "$path": "src/GUI"
       }
     },
 

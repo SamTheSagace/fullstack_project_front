@@ -7,7 +7,6 @@
 /*.rbxlx.lock
 /*.rbxl.lock
 
-Packages/
-ServerPackages/
+.wallyPackages/
 sourcemap.json
 wally.lock
