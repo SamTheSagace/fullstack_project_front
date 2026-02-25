@@ -1,5 +1,5 @@
 {
-    "luau-lsp.sourcemap.rojoPath": "scripts/rojo.exe",
+    "luau-lsp.sourcemap.rojoPath": "",
     "luau-lsp.sourcemap.rojoProjectFile": "default.project.json",
     "luau-lsp.sourcemap.sourcemapFile": "sourcemap.json",
     "luau-lsp.sourcemap.enabled": true,

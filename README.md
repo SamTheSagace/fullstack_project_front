@@ -37,10 +37,10 @@ This project uses [mise](https://mise.jdx.dev) as a toolchain manager to handle 
 To build the place from scratch, use:
 
 ```bash
-rojo build -o "fullstack_project.rbxlx"
+rojo build -o "fullstack_project.rbxl"
 ```
 
-Next, open `fullstack_project.rbxlx` in Roblox Studio and start the Rojo server:
+Next, open `fullstack_project.rbxl` in Roblox Studio and start the Rojo server:
 
 ```bash
 rojo serve

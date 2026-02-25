@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Users = require(ReplicatedStorage.Shared.Api.Users)
+local Session = require(ReplicatedStorage.Shared.Api.Session)
 
-Users()
-
+Session();
 print("Hello world, from server!")

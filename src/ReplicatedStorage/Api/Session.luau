@@ -1,10 +1,10 @@
 local HttpService = game:GetService("HttpService")
 
 return function ()
-    local URL_USERS = "https://nontestable-emory-punningly.ngrok-free.dev/users/"
+    local URL_SESSION = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
 
     -- Make the request to our endpoint URL
-    local response = HttpService:GetAsync(URL_USERS)
+    local response = HttpService:GetAsync(URL_SESSION)
 
     if response then
         print(response)
