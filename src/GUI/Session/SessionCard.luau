@@ -1,7 +1,7 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
-local Card = require(StarterGui.GUI.Components.Card)
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 
@@ -14,20 +14,42 @@ type props = {
 
 local function SessionCard(props: props)
 	local playerIds = SessionHelpers.getSessionPlayerIds(props.sessionData)
+	local ThumbType = Enum.ThumbnailType.HeadShot
+	local ThumbSize = Enum.ThumbnailSize.Size150x150
+
 	local playersChildren = {
 		Layout = e("UIListLayout", {
 			FillDirection = Enum.FillDirection.Horizontal,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
 			SortOrder = Enum.SortOrder.LayoutOrder,
-			Padding = UDim.new(0, 8),
+			Padding = UDim.new(0, 5),
 		}),
 	}
+	local plrAvatar, isReady = Players:GetUserThumbnailAsync(911172336, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
+
+	playersChildren[`Avatar_1`] = e("ImageLabel", {
+		Size = UDim2.fromOffset(38, 38),
+		BackgroundColor3 = Color3.fromRGB(39, 55, 75),
+		Image = plrAvatar,
+		ScaleType = Enum.ScaleType.Crop,
+	}, {
+		Corner = e("UICorner", {
+			CornerRadius = UDim.new(1, 0),
+		}),
+		Stroke = e("UIStroke", {
+			Color = Color3.fromRGB(79, 102, 128),
+			Thickness = 1,
+		}),
+	})
 
 	for playerIndex, userId in ipairs(playerIds) do
+		local plrAvatar, isReady = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
+
+		print("Avatar ready for userId", userId, "isReady:", isReady)
 		playersChildren[`Avatar_{playerIndex}`] = e("ImageLabel", {
 			Size = UDim2.fromOffset(38, 38),
 			BackgroundColor3 = Color3.fromRGB(39, 55, 75),
-			Image = `rbxthumb://type=AvatarHeadShot&id={userId}&w=100&h=100`,
+			Image = plrAvatar,
 			ScaleType = Enum.ScaleType.Crop,
 		}, {
 			Corner = e("UICorner", {
@@ -40,22 +62,26 @@ local function SessionCard(props: props)
 		})
 	end
 
-	return e(Card, {
+	return e("Frame", {
 		LayoutOrder = props.index,
-		Size = UDim2.new(1, -10, 0, 86),
-		BackgroundColor3 = Color3.fromRGB(17, 26, 39),
+		Size = UDim2.fromScale(1, 0.25),
+		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		BackgroundTransparency = 1,
 	}, {
-		Corner = e("UICorner", {
-			CornerRadius = UDim.new(0, 2),
-		}),
 		Stroke = e("UIStroke", {
 			Color = Color3.fromRGB(42, 62, 84),
 			Thickness = 1,
 		}),
+		Padding = e("UIPadding", {
+			PaddingLeft = UDim.new(0, 5),
+			PaddingRight = UDim.new(0, 5),
+			PaddingTop = UDim.new(0, 5),
+			PaddingBottom = UDim.new(0, 5),
+		}),
 		NameLabel = e("TextLabel", {
 			Text = SessionHelpers.getSessionName(props.sessionData, props.index),
-			Position = UDim2.fromOffset(12, 8),
-			Size = UDim2.new(1, -24, 0, 26),
+			Position = UDim2.fromScale(0, 0),
+			Size = UDim2.fromScale(1, 0.2),
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
 			TextSize = 18,
@@ -63,8 +89,9 @@ local function SessionCard(props: props)
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}),
 		PlayersRow = e("Frame", {
-			Position = UDim2.fromOffset(12, 40),
-			Size = UDim2.new(1, -24, 0, 38),
+			Position = UDim2.fromScale(0,1),
+            AnchorPoint = Vector2.new(0, 1),
+			Size = UDim2.fromScale(1, 0.8),
 			BackgroundTransparency = 1,
 			ClipsDescendants = true,
 		}, playersChildren),

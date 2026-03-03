@@ -7,7 +7,6 @@ print("Server listener booted:", listSessionsEVT:GetFullName())
 
 listSessionsEVT.OnServerEvent:Connect(function(player)
 	local result = Session.GetSessions()
-	print("Sessions retrieved:", result)
 	listSessionsEVT:FireClient(player, result)
 end)
 
