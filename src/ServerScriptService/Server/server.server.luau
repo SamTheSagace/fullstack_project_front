@@ -1,9 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Session = require(ReplicatedStorage.Api.Session)
-local b_createRoom = ReplicatedStorage:WaitForChild("b_createRoom")
+local listSessionsEVT = ReplicatedStorage:WaitForChild("listSessions")
+local createSessionEVT = ReplicatedStorage:WaitForChild("createSession")
 -- local result = Session.GetSessions()
+print("Server listener booted:", listSessionsEVT:GetFullName())
 
-b_createRoom.OnServerEvent:Connect(function(player)
+listSessionsEVT.OnServerEvent:Connect(function(player)
 	local result = Session.GetSessions()
 	print("Sessions retrieved:", result)
+	listSessionsEVT:FireClient(player, result)
+end)
+
+createSessionEVT.OnServerEvent:Connect(function(player)
+	print("Session not created for player:", player.UserId, "\n TODO")
 end)
