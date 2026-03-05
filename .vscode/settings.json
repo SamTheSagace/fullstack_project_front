@@ -1,21 +1,22 @@
 {
-    "luau-lsp.sourcemap.sourcemapFile": "sourcemap.json",
-    "luau-lsp.sourcemap.enabled": true,
-    "luau-lsp.sourcemap.autogenerate": true,
-    "luau-lsp.sourcemap.rojoProjectFile": "default.project.json",
-    "luau-lsp.completion.autocompleteEnd": true,
-    "luau-lsp.completion.imports.separateGroupsWithLine": true,
-    "luau-lsp.completion.imports.stringRequires.enabled": true,
-    "[lua]": {
-        "editor.defaultFormatter": "JohnnyMorganz.stylua",
-        "editor.formatOnSave": true
-    },
-    "[luau]": {
-        "editor.defaultFormatter": "JohnnyMorganz.stylua",
-        "editor.formatOnSave": true
-    },
-    "workbench.editor.customLabels.patterns": {
-        "**/init.lua": "${dirname} (${filename}.${extname})",
-        "**/init.luau": "${dirname} (${filename}.${extname})"
-    }
+  "luau-lsp.sourcemap.sourcemapFile": "sourcemap.json",
+  "luau-lsp.sourcemap.enabled": true,
+  "luau-lsp.sourcemap.autogenerate": true,
+  "luau-lsp.sourcemap.rojoProjectFile": "",
+  "luau-lsp.completion.autocompleteEnd": true,
+  "luau-lsp.completion.imports.separateGroupsWithLine": true,
+  "luau-lsp.completion.imports.stringRequires.enabled": false,
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua",
+    "editor.formatOnSave": true
+  },
+  "[luau]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua",
+    "editor.formatOnSave": true
+  },
+  "workbench.editor.customLabels.patterns": {
+    "**/init.lua": "${dirname} (${filename}.${extname})",
+    "**/init.luau": "${dirname} (${filename}.${extname})"
+  },
+  "luau-lsp.sourcemap.useVSCodeWatcher": true
 }
