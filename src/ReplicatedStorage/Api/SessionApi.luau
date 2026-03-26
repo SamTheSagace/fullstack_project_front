@@ -7,9 +7,9 @@ type CreateSessionInput = DTO.CreateSessionInput
 local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
 local URL_SESSION = URL_API .. "sessions/"
 
-local Api = {}
+local SessionApi = {}
 
-function Api.GetSessions()
+function SessionApi:GetSessions()
 	local success, response = pcall(function()
 		return HttpService:GetAsync(URL_SESSION)
 	end)
@@ -20,7 +20,7 @@ function Api.GetSessions()
 	return HttpService:JSONDecode(response)
 end
 
-function Api.CreateSession(createSessionInput: CreateSessionInput)
+function SessionApi:CreateSession(createSessionInput: CreateSessionInput)
 	local jsonData = HttpService:JSONEncode(createSessionInput)
 	local success, response = pcall(function()
 		return HttpService:PostAsync(URL_SESSION, jsonData, Enum.HttpContentType.ApplicationJson)
@@ -32,4 +32,4 @@ function Api.CreateSession(createSessionInput: CreateSessionInput)
 	return HttpService:JSONDecode(response)
 end
 
-return Api
+return SessionApi

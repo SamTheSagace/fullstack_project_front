@@ -44,8 +44,6 @@ local function SessionCard(props: props)
 
 	for playerIndex, userId in ipairs(playerIds) do
 		local plrAvatar, isReady = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
-
-		print("Avatar ready for userId", userId, "isReady:", isReady)
 		playersChildren[`Avatar_{playerIndex}`] = e("ImageLabel", {
 			Size = UDim2.fromOffset(38, 38),
 			BackgroundColor3 = Color3.fromRGB(39, 55, 75),

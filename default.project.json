@@ -7,6 +7,12 @@
       "Api": {
         "$path": "src/ReplicatedStorage/Api"
       },
+      "Events": {
+        "$path": "src/ReplicatedStorage/Events"
+      },
+      "Models": {
+        "$path": "src/ReplicatedStorage/Models"
+      },
       "Shared": {
         "$path": "src/ReplicatedStorage/Shared"
       },
@@ -21,6 +27,9 @@
     "ServerScriptService": {
       "Server": {
         "$path": "src/ServerScriptService/Server"
+      },
+      "Services": {
+        "$path": "src/ServerScriptService/Services"
       }
     },
 
