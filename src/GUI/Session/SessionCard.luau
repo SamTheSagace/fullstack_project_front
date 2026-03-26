@@ -7,6 +7,8 @@ local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 
 local e = React.createElement
 
+local joinSessionEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("joinSession")
+
 type props = {
 	sessionData: any,
 	index: number,
@@ -25,22 +27,12 @@ local function SessionCard(props: props)
 			Padding = UDim.new(0, 5),
 		}),
 	}
-	local plrAvatar, isReady = Players:GetUserThumbnailAsync(911172336, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
 
-	playersChildren[`Avatar_1`] = e("ImageLabel", {
-		Size = UDim2.fromOffset(38, 38),
-		BackgroundColor3 = Color3.fromRGB(39, 55, 75),
-		Image = plrAvatar,
-		ScaleType = Enum.ScaleType.Crop,
-	}, {
-		Corner = e("UICorner", {
-			CornerRadius = UDim.new(1, 0),
-		}),
-		Stroke = e("UIStroke", {
-			Color = Color3.fromRGB(79, 102, 128),
-			Thickness = 1,
-		}),
-	})
+	local function handleJoinActivated()
+		joinSessionEvent:FireServer({
+			code = props.sessionData.code,
+		})
+	end
 
 	for playerIndex, userId in ipairs(playerIds) do
 		local plrAvatar, isReady = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
@@ -86,9 +78,24 @@ local function SessionCard(props: props)
 			TextColor3 = Color3.fromRGB(238, 243, 247),
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}),
+		JoinButton = e("TextButton", {
+			Text = "Join",
+			Position = UDim2.fromScale(0.9, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromScale(0.1, 0.4),
+			BackgroundColor3 = Color3.fromRGB(79, 102, 128),
+			TextColor3 = Color3.fromRGB(238, 243, 247),
+			Font = Enum.Font.GothamBold,
+			TextSize = 16,
+			[React.Event.Activated] = handleJoinActivated,
+		}, {
+			Corner = e("UICorner", {
+				CornerRadius = UDim.new(0.5, 0),
+			}),
+		}),
 		PlayersRow = e("Frame", {
-			Position = UDim2.fromScale(0,1),
-            AnchorPoint = Vector2.new(0, 1),
+			Position = UDim2.fromScale(0, 1),
+			AnchorPoint = Vector2.new(0, 1),
 			Size = UDim2.fromScale(1, 0.8),
 			BackgroundTransparency = 1,
 			ClipsDescendants = true,
