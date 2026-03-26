@@ -4,11 +4,11 @@ local StarterGui = game:GetService("StarterGui")
 local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local SessionMenu = require(StarterGui.GUI.Session.SessionMenu)
-local CardMenu = require(StarterGui.GUI.CardSelection.CardMenu)
 local e = React.createElement
 
 local function RootUI()
 	local isMenuVisible, setIsMenuVisible = React.useState(false)
+
 	return e(React.Fragment, nil, {
 		OpenSessionMenuButton = e(CustomButton, {
 			Text = "Open Menu",
@@ -20,6 +20,7 @@ local function RootUI()
 				setIsMenuVisible(not isMenuVisible)
 			end,
 		}),
+
 		SessionMenu = e(SessionMenu, {
 			isVisible = isMenuVisible,
 		}),

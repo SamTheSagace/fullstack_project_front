@@ -1,12 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local CardMenu = require(script.Parent.CardMenu)
+local VoteMenu = require(script.Parent.VoteMenu)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 
 return function(parent)
 	local root = ReactRoblox.createRoot(parent)
-	local app = React.createElement(CardMenu)
+	local app = React.createElement(VoteMenu)
 	root:render(app)
 
 	return function()
