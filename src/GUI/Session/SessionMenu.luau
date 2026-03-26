@@ -7,8 +7,8 @@ local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 
 local e = React.createElement
-local listSessionsEvent = ReplicatedStorage:WaitForChild("listSessions")
-local createSessionEvent = ReplicatedStorage:WaitForChild("createSession")
+local listSessionsEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("listSessions")
+local createSessionEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("createSession")
 
 type props = {
 	isVisible: boolean,
