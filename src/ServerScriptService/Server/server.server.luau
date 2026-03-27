@@ -220,10 +220,12 @@ createSession.OnServerEvent:Connect(function(player, sessionName: string)
 		return
 	end
 
+	local serv_id = game.PlaceId
 	local createSessionInput = {
 		owner_roblox_user_id = player.UserId,
 		display_name = player.DisplayName,
 		name = sessionName,
+		owner_server_id = serv_id,
 	}
 	local result = SessionApi:CreateSession(createSessionInput)
 	local rawCode = result and result["code"]
