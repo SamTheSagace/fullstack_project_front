@@ -91,6 +91,7 @@ local function Card(props: CardProps)
 			setAnimating(false)
 		end)
 	end, { props.isFinished })
+
 	React.useEffect(function()
 		if props.isFinished then
 			if isSelected then
@@ -101,6 +102,7 @@ local function Card(props: CardProps)
 			end
 		end
 	end, { props.selectedValue })
+
 	return e("Frame", {
 		Size = UDim2.fromScale(0.08, 0.4),
 		BackgroundTransparency = 1,
@@ -122,7 +124,11 @@ local function Card(props: CardProps)
 				if props.isFinished then
 					return
 				end
-				props.setSelectedValue(props.value)
+				if isSelected then
+					props.setSelectedValue(nil)
+				else
+					props.setSelectedValue(props.value)
+				end
 			end,
 		}, {
 			Corner = e("UICorner", {

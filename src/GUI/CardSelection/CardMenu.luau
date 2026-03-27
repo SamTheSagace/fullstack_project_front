@@ -16,6 +16,7 @@ local function CardMenu(props: props)
 	local selectedValue, setSelectedValue = React.useState(nil)
 	local Finished, setFinished = React.useState(false)
 	local isInteractable = selectedValue ~= nil
+	
 	local cardsFrame = {
 		Layout = e("UIListLayout", {
 			SortOrder = Enum.SortOrder.LayoutOrder,

@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 
 local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
+local SessionCode = require(StarterGui.GUI.Components.SessionCode)
 local SessionMenu = require(StarterGui.GUI.Session.SessionMenu)
 local e = React.createElement
 
@@ -56,8 +57,8 @@ local function RootUI()
 		end
 	end, { localPlayer })
 
-	local shouldShowLeaveButton = currentSession ~= nil and not isSessionActive(currentSession)
-	local shouldShowMenuControls = not shouldShowLeaveButton
+	local shouldShowWaitingControls = currentSession ~= nil and not isSessionActive(currentSession)
+	local shouldShowMenuControls = not shouldShowWaitingControls
 
 	local function handleLeaveSession()
 		leaveSessionEvent:FireServer()
@@ -81,7 +82,11 @@ local function RootUI()
 			isVisible = shouldShowMenuControls and isMenuVisible,
 		}),
 
-		LeaveSessionButton = shouldShowLeaveButton and e(CustomButton, {
+		SessionCode = shouldShowWaitingControls and e(SessionCode, {
+			Text = currentSession and currentSession.code or "",
+		}) or nil,
+
+		LeaveSessionButton = shouldShowWaitingControls and e(CustomButton, {
 			Text = "Leave Session",
 			Position = UDim2.fromScale(0.5, 0.925),
 			Size = UDim2.fromScale(0.22, 0.1),
