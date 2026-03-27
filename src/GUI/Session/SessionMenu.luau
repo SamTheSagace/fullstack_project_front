@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
 local SessionCard = require(script.Parent.SessionCard)
 local React = require(ReplicatedStorage.Packages.React)

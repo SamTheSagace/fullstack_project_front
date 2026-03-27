@@ -9,9 +9,10 @@ return function()
 	print("Mounting UI")
 	local player = Players.LocalPlayer
 	local playerGui = player:WaitForChild("PlayerGui")
-	local container = Instance.new("ScreenGui")
+	local container: ScreenGui = Instance.new("ScreenGui")
 	container.Name = "React"
-	container.IgnoreGuiInset = true
+	container.IgnoreGuiInset = false
+	container.ScreenInsets = Enum.ScreenInsets.CoreUISafeInsets
 	container.ResetOnSpawn = false
 	container.Parent = playerGui
 	container.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
