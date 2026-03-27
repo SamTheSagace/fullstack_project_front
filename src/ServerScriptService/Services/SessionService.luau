@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
+local Utils = require(ReplicatedStorage.Shared.Utils)
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 
 local RoomService = require(script.Parent:WaitForChild("RoomService"))
@@ -12,9 +13,6 @@ local remotes = nil
 local sessionMetaByCode = {}
 local isInitialized = false
 
-local function trim(value: string): string
-	return string.gsub(value, "^%s*(.-)%s*$", "%1")
-end
 
 local function fireError(player: Player, message: string)
 	if remotes then
@@ -195,7 +193,7 @@ function SessionService.handleListSessions(player: Player)
 end
 
 function SessionService.handleCreateSession(player: Player, sessionName: string)
-	if type(sessionName) ~= "string" or trim(sessionName) == "" then
+	if type(sessionName) ~= "string" or Utils.trim(sessionName) == "" then
 		fireError(player, "Session name is required")
 		return
 	end
@@ -212,7 +210,7 @@ function SessionService.handleCreateSession(player: Player, sessionName: string)
 		return
 	end
 
-	local code = string.upper(trim(rawCode))
+	local code = string.upper(Utils.trim(rawCode))
 	sessionMetaByCode[code] = {
 		name = result.name or sessionName,
 		hostUserId = player.UserId,
@@ -238,7 +236,7 @@ function SessionService.handleJoinSession(player: Player, payload)
 		return
 	end
 
-	local cleanedCode = string.upper(trim(code))
+	local cleanedCode = string.upper(Utils.trim(code))
 	if cleanedCode == "" then
 		fireError(player, "Session code is required")
 		return
