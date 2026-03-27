@@ -59,9 +59,7 @@ local function ItemMenu(props: props)
 			Position = UDim2.fromScale(0.5, 1),
 			AnchorPoint = Vector2.new(0.5, 1),
 			BackgroundTransparency = 1,
-		}, {
-			CreateItemForm = e(CreateItemForm),
-		}),
+		}, { isCreate and { CreateItemForm = e(CreateItemForm) } or {} }),
 	})
 end
 

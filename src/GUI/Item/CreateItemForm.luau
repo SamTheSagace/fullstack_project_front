@@ -22,7 +22,12 @@ local function CreateItemForm()
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 	}, {
-
+		Corner = e("UICorner", {
+			CornerRadius = UDim.new(0, 5),
+		}),
+		Border = e("UIStroke", {
+			Color = Color3.fromRGB(255, 255, 255),
+		}),
 		NameFrame = e("Frame", {
 			Size = UDim2.fromScale(1, 0.25),
 			Position = UDim2.fromScale(0.5, 0),
