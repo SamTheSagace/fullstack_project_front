@@ -18,7 +18,7 @@ local function ItemMenu(props: props)
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(8, 18, 31),
-		-- Visible = props.isVisible,
+		Visible = props.isVisible,
 	}, {
 		UICorner = e("UICorner", {
 			CornerRadius = UDim.new(0.2, 0),
