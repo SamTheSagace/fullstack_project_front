@@ -34,16 +34,17 @@ local function getMeetingRoomTemplate(): Model?
 end
 
 local function getRoomTeleportCFrame(roomModel: Model): CFrame
-	local anchor = roomModel:FindFirstChild("Floor", true)
-	if anchor then
-		anchor = anchor:FindFirstChildWhichIsA("Door", true)
+	local anchor = roomModel:FindFirstChild("Door")
+	if anchor == nil then
+		anchor = roomModel:FindFirstChild("Floor", true)
 	end
 	if anchor == nil then
 		anchor = roomModel:FindFirstChildWhichIsA("BasePart", true)
 	end
 
-	if anchor and anchor:IsA("BasePart") then
-		return anchor.CFrame + Vector3.new(0, 4, 0)
+	if anchor and anchor.Name == "Door" then
+		anchor = anchor:FindFirstChildWhichIsA("BasePart")
+		return CFrame.new(anchor.CFrame.Position + Vector3.new(0, 2, -5))
 	end
 
 	return roomModel:GetPivot() * CFrame.new(0, 6, 0)
@@ -129,10 +130,13 @@ function RoomService.teleportPlayerToSpawn(player: Player): boolean
 		if not character then
 			return
 		end
-		local root = character:FindFirstChild("HumanoidRootPart")
+		local root: BasePart = character:FindFirstChild("HumanoidRootPart")
+		local humanoid: Humanoid = character:FindFirstChildOfClass("Humanoid")
 		if not root then
 			return
 		end
+		humanoid.Sit = false
+		task.wait(0.1)
 		root.CFrame = getSpawnCFrame()
 	end)
 	if not ok then
