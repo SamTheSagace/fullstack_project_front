@@ -43,8 +43,9 @@ rojo build -o "fullstack_project.rbxl"
 Next, open `fullstack_project.rbxl` in Roblox Studio and start the Rojo server:
 
 ```bash
-rojo serve
+rojo serve && rojo sourcemap --watch default.project.json --output sourcemap.json
 ```
+
 
 ## Managing Wally Packages
 

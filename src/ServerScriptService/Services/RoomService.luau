@@ -1,105 +1,160 @@
-local ServerStorage = game:GetService("ServerStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local RoomService = {}
 
-local ACTIVE_ROOM_NAME = "ActiveMeetingRoom"
+local ROOM_SPACING_STUDS = 600
+local ROOM_BASE_CFRAME = CFrame.new(10000, 10000, 10000)
+local MODELS_FOLDER = ReplicatedStorage:WaitForChild("Models")
 
-local cachedRoomModel = nil
-local cachedSeats = {}
-local assignedSeatByUserId = {} -- [userId] = seatIndex
-local assignedUserBySeatIndex = {} -- [seatIndex] = userId
+local sessionRoomsByCode = {}
+local spawnedRoomCount = 0
 
-local function collectSeats(roomModel: Model): { Seat }
-	local seatsFolder = roomModel:FindFirstChild("Seats")
-	if seatsFolder == nil then
-		return {}
+local function getSessionRoomsFolder(): Folder
+	local folder = Workspace:FindFirstChild("SessionRooms")
+	if folder and folder:IsA("Folder") then
+		return folder
 	end
 
-	local seats = {}
-	for _, child in ipairs(seatsFolder:GetChildren()) do
-		if child:IsA("Seat") or child:IsA("VehicleSeat") then
-			table.insert(seats, child)
-		end
-	end
-
-	table.sort(seats, function(a, b)
-		return a.Name < b.Name
-	end)
-
-	return seats
+	local created = Instance.new("Folder")
+	created.Name = "SessionRooms"
+	created.Parent = Workspace
+	return created
 end
 
-function RoomService.ensureRoomSpawned()
-	local existing = Workspace:FindFirstChild(ACTIVE_ROOM_NAME)
+--**
+--* Retrieves the meeting room template model from ReplicatedStorage. Returns nil if not found or if the found object is not a Model.
+--* @return Model? The meeting room template model, or nil if not found/invalid
+local function getMeetingRoomTemplate(): Model?
+	local template = MODELS_FOLDER:FindFirstChild("Meeting_Room")
+	if template and template:IsA("Model") then
+		return template
+	end
+	return nil
+end
+
+local function getRoomTeleportCFrame(roomModel: Model): CFrame
+	local anchor = roomModel:FindFirstChild("Floor", true)
+	if anchor then
+		anchor = anchor:FindFirstChildWhichIsA("Door", true)
+	end
+	if anchor == nil then
+		anchor = roomModel:FindFirstChildWhichIsA("BasePart", true)
+	end
+
+	if anchor and anchor:IsA("BasePart") then
+		return anchor.CFrame + Vector3.new(0, 4, 0)
+	end
+
+	return roomModel:GetPivot() * CFrame.new(0, 6, 0)
+end
+
+local function getSpawnCFrame(): CFrame
+	local spawnLocation = Workspace:FindFirstChildWhichIsA("SpawnLocation", true)
+	if spawnLocation then
+		return spawnLocation.CFrame + Vector3.new(0, 5, 0)
+	end
+
+	return CFrame.new(0, 10, 0)
+end
+
+function RoomService.ensureRoomForSession(sessionCode: string): (Model?, string?)
+	local current = sessionRoomsByCode[sessionCode]
+	if current and current.Parent then
+		return current, nil
+	end
+
+	local roomsFolder = getSessionRoomsFolder()
+	local existing = roomsFolder:FindFirstChild(`SessionRoom_{sessionCode}`)
 	if existing and existing:IsA("Model") then
-		cachedRoomModel = existing
-	else
-		local ok, result = pcall(function()
-			local roomAssets = ServerStorage:WaitForChild("RoomAssets")
-			local roomTemplate = roomAssets:WaitForChild("MeetingRoom")
-			local clonedRoom = roomTemplate:Clone()
-			clonedRoom.Name = ACTIVE_ROOM_NAME
-			clonedRoom.Parent = Workspace
-			return clonedRoom
-		end)
-
-		if not ok then
-			warn("[RoomService] Failed to spawn meeting room:", result)
-			return nil, {}
-		end
-
-		cachedRoomModel = result
+		sessionRoomsByCode[sessionCode] = existing
+		return existing, nil
 	end
 
-	cachedSeats = collectSeats(cachedRoomModel)
-	return cachedRoomModel, cachedSeats
-end
-
-function RoomService.assignSeat(player: Player): number?
-	if assignedSeatByUserId[player.UserId] then
-		return assignedSeatByUserId[player.UserId]
+	local template = getMeetingRoomTemplate()
+	if template == nil then
+		return nil, "Meeting_Room model is missing in ReplicatedStorage.Models"
 	end
 
-	local roomModel, seats = RoomService.ensureRoomSpawned()
-	if roomModel == nil or #seats == 0 then
-		return nil
-	end
-
-	local seatIndex = nil
-	for index, _seat in ipairs(seats) do
-		if assignedUserBySeatIndex[index] == nil then
-			seatIndex = index
-			break
-		end
-	end
-
-	if seatIndex == nil then
-		return nil
-	end
-
-	local seat = seats[seatIndex]
-	local ok, seatErr = pcall(function()
-		local character = player.Character or player.CharacterAdded:Wait()
-		local humanoid = character:FindFirstChildOfClass("Humanoid")
-		if humanoid == nil then
-			error("Humanoid missing for seating")
-		end
-
-		character:PivotTo(seat.CFrame + Vector3.new(0, 3, 0))
-		task.wait()
-		seat:Sit(humanoid)
-		humanoid.Sit = true
+	local ok, roomOrError = pcall(function()
+		local roomModel = template:Clone()
+		roomModel.Name = `SessionRoom_{sessionCode}`
+		roomModel.Parent = roomsFolder
+		return roomModel
 	end)
 
 	if not ok then
-		warn("[RoomService] Failed to seat player:", player.UserId, seatErr)
-		return nil
+		return nil, `Failed to clone room model: {roomOrError}`
 	end
 
-	assignedSeatByUserId[player.UserId] = seatIndex
-	assignedUserBySeatIndex[seatIndex] = player.UserId
-	return seatIndex
+	spawnedRoomCount = math.max(spawnedRoomCount, #roomsFolder:GetChildren())
+	local targetCFrame = ROOM_BASE_CFRAME + Vector3.new((spawnedRoomCount - 1) * ROOM_SPACING_STUDS, 0, 0)
+	local positionedOk, positionedErr = pcall(function()
+		roomOrError:PivotTo(targetCFrame)
+	end)
+	if not positionedOk then
+		warn("[RoomService] Failed to position session room:", positionedErr)
+	end
+
+	sessionRoomsByCode[sessionCode] = roomOrError
+	return roomOrError, nil
+end
+
+function RoomService.teleportPlayerToSessionRoom(player: Player, sessionCode: string): boolean
+	local roomModel, roomError = RoomService.ensureRoomForSession(sessionCode)
+	if roomModel == nil then
+		warn("[RoomService] Could not load session room:", roomError)
+		return false
+	end
+
+	local ok, err = pcall(function()
+		local character = player.Character or player.CharacterAdded:Wait()
+		local root = character:WaitForChild("HumanoidRootPart", 5)
+		if not root then
+			error("HumanoidRootPart not found")
+		end
+		root.CFrame = getRoomTeleportCFrame(roomModel)
+	end)
+	if not ok then
+		warn("[RoomService] Teleport to session room failed:", err)
+		return false
+	end
+
+	return true
+end
+
+function RoomService.teleportPlayerToSpawn(player: Player): boolean
+	local ok, err = pcall(function()
+		local character = player.Character
+		if not character then
+			return
+		end
+		local root = character:FindFirstChild("HumanoidRootPart")
+		if not root then
+			return
+		end
+		root.CFrame = getSpawnCFrame()
+	end)
+	if not ok then
+		warn("[RoomService] Teleport to spawn failed:", err)
+		return false
+	end
+
+	return true
+end
+
+function RoomService.destroyRoomForSession(sessionCode: string)
+	local room = sessionRoomsByCode[sessionCode]
+	if room and room.Parent then
+		local ok, err = pcall(function()
+			room:Destroy()
+		end)
+		if not ok then
+			warn("[RoomService] Failed to destroy session room:", err)
+		end
+	end
+
+	sessionRoomsByCode[sessionCode] = nil
 end
 
 return RoomService

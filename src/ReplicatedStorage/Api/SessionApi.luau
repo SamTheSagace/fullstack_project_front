@@ -3,6 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DTO = require(ReplicatedStorage.Types.DTO)
 type CreateSessionInput = DTO.CreateSessionInput
+type JoinSessionInput = DTO.JoinSessionInput
+type LeaveSessionInput = DTO.LeaveSessionInput
 
 local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
 local URL_SESSION = URL_API .. "sessions/"
@@ -29,6 +31,31 @@ function SessionApi:CreateSession(createSessionInput: CreateSessionInput)
 		warn("Failed to create session:", response)
 		return nil
 	end
+	return HttpService:JSONDecode(response)
+end
+
+function SessionApi:JoinSession(code: string, data: JoinSessionInput)
+	local body = HttpService:JSONEncode(data)
+	local success, response = pcall(function()
+		return HttpService:PostAsync(URL_SESSION .. code .. "/join/", body, Enum.HttpContentType.ApplicationJson)
+	end)
+	if not success then
+		warn("Failed to join session:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+
+function SessionApi:LeaveSession(code: string, data: LeaveSessionInput)
+	local body = HttpService:JSONEncode(data)
+	local success, response = pcall(function()
+		return HttpService:PostAsync(URL_SESSION .. code .. "/leave/", body, Enum.HttpContentType.ApplicationJson)
+	end)
+	if not success then
+		warn("Failed to leave session:", response)
+		return nil
+	end
+	print(response)
 	return HttpService:JSONDecode(response)
 end
 
