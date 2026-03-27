@@ -55,7 +55,7 @@ function SessionHelpers.getSessionName(sessionData: any, index: number): string
 	end
 
 	if type(sessionData.name) == "string" and sessionData.name ~= "" then
-		return sessionData.name
+		return `{sessionData.name} - {sessionData.code}`
 	end
 
 	return `Session {index}`
