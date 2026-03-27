@@ -15,6 +15,7 @@ type props = {
 	TextScaled: boolean,
 	TextColor3: Color3,
 	onButtonClick: () -> (),
+	Interactable: boolean,
 }
 
 local function CustomButton(props: props)
@@ -34,6 +35,7 @@ local function CustomButton(props: props)
 			BackgroundColor3 = props.ButtonColor or Color3.fromRGB(0, 122, 255),
 			TextScaled = props.TextScaled or true,
 			TextColor3 = props.TextColor3 or Color3.fromRGB(255, 255, 255),
+			Interactable = props.Interactable,
 			[React.Event.Activated] = function()
 				props.onButtonClick()
 			end,

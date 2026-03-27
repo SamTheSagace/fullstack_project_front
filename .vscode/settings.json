@@ -18,5 +18,6 @@
     "**/init.lua": "${dirname} (${filename}.${extname})",
     "**/init.luau": "${dirname} (${filename}.${extname})"
   },
-  "luau-lsp.sourcemap.useVSCodeWatcher": true
+  "luau-lsp.sourcemap.useVSCodeWatcher": true,
+  "stylua.targetReleaseVersion": "latest"
 }
