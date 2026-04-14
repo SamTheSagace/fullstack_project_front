@@ -12,8 +12,9 @@ local URL_SESSION = URL_API .. "sessions/"
 local SessionApi = {}
 
 function SessionApi:GetSessions()
+	local serv_id = game.PlaceId
 	local success, response = pcall(function()
-		return HttpService:GetAsync(URL_SESSION)
+		return HttpService:GetAsync(`{URL_SESSION}?&owner_server_id={serv_id}`)
 	end)
 	if not success then
 		warn("Failed to get sessions:", response)
