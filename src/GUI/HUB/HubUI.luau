@@ -1,12 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
-local ItemMenu = require(script.Parent.ItemMenu)
 local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
+local SessionMenu = require(StarterGui.GUI.HUB.Menu.SessionMenu)
 local e = React.createElement
 
-local function RootUI()
+local function HubUI()
 	local isMenuVisible, setIsMenuVisible = React.useState(false)
 
 	return e(React.Fragment, nil, {
@@ -21,10 +21,10 @@ local function RootUI()
 			end,
 		}),
 
-		ItemMenu = e(ItemMenu, {
+		SessionMenu = e(SessionMenu, {
 			isVisible = isMenuVisible,
 		}),
 	})
 end
 
-return RootUI
+return HubUI

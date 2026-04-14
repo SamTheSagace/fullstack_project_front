@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local SessionCard = require(script.Parent.SessionCard)
+local SessionEntry = require(script.Parent.SessionEntry)
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 local Utils = require(ReplicatedStorage.Shared.Utils)
@@ -44,7 +44,7 @@ local function SessionMenu(props: props)
 	for index, sessionData in ipairs(sessions) do
 		hasSessions = true
 
-		sessionCards[`Session_{index}`] = e(SessionCard, {
+		sessionCards[`Session_{index}`] = e(SessionEntry, {
 			sessionData = sessionData,
 			index = index,
 		})

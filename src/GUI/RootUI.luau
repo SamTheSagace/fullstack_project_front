@@ -1,17 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
+local HubUI = require(StarterGui.GUI.HUB.HubUI)
+local SessionDuringUI = require(StarterGui.GUI.Session.During.SessionDuringUI)
+local SessionWaitingUI = require(StarterGui.GUI.Session.Waiting.SessionWaitingUI)
 local React = require(ReplicatedStorage.Packages.React)
-local CustomButton = require(StarterGui.GUI.Components.CustomButton)
-local SessionCode = require(StarterGui.GUI.Components.SessionCode)
-local SessionMenu = require(StarterGui.GUI.Session.SessionMenu)
 local e = React.createElement
 
 local eventsFolder = ReplicatedStorage:WaitForChild("Events")
 local sessionStateEvent = eventsFolder:WaitForChild("sessionState")
 local sessionErrorEvent = eventsFolder:WaitForChild("sessionError")
-local leaveSessionEvent = eventsFolder:WaitForChild("leaveSession")
 
 local function isPlayerInSession(snapshot, userId: number): boolean
 	if type(snapshot) ~= "table" or type(snapshot.members) ~= "table" then
@@ -33,7 +32,6 @@ end
 
 local function RootUI()
 	local localPlayer = Players.LocalPlayer
-	local isMenuVisible, setIsMenuVisible = React.useState(false)
 	local currentSession, setCurrentSession = React.useState(nil)
 
 	React.useEffect(function()
@@ -47,7 +45,6 @@ local function RootUI()
 			local message = if type(err) == "table" then err.message else tostring(err)
 			if message == "Session closed by owner" or message == "You are not in a session" then
 				setCurrentSession(nil)
-				setIsMenuVisible(false)
 			end
 		end)
 
@@ -57,44 +54,24 @@ local function RootUI()
 		end
 	end, { localPlayer })
 
-	local shouldShowWaitingControls = currentSession ~= nil and not isSessionActive(currentSession)
-	local shouldShowMenuControls = not shouldShowWaitingControls
+	local shouldShowSessionWaitingUI = currentSession ~= nil and not isSessionActive(currentSession)
+	local shouldShowSessionDuringUI = currentSession ~= nil and isSessionActive(currentSession)
 
-	local function handleLeaveSession()
-		leaveSessionEvent:FireServer()
-		setCurrentSession(nil)
-		setIsMenuVisible(false)
+	if shouldShowSessionWaitingUI then
+		return e(React.Fragment, nil, {
+			SessionWaitingUI = e(SessionWaitingUI, {
+				currentSession = currentSession,
+			}),
+		})
 	end
-
-	return e(React.Fragment, nil, {
-		OpenSessionMenuButton = shouldShowMenuControls and e(CustomButton, {
-			Text = "Open Menu",
-			Position = UDim2.fromScale(0.5, 0.925),
-			Size = UDim2.fromScale(0.2, 0.1),
-			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
-			ButtonColor = Color3.fromRGB(0, 122, 255),
-			onButtonClick = function()
-				setIsMenuVisible(not isMenuVisible)
-			end,
-		}) or nil,
-
-		SessionMenu = e(SessionMenu, {
-			isVisible = shouldShowMenuControls and isMenuVisible,
-		}),
-
-		SessionCode = shouldShowWaitingControls and e(SessionCode, {
-			Text = currentSession and currentSession.code or "",
-		}) or nil,
-
-		LeaveSessionButton = shouldShowWaitingControls and e(CustomButton, {
-			Text = "Leave Session",
-			Position = UDim2.fromScale(0.5, 0.925),
-			Size = UDim2.fromScale(0.22, 0.1),
-			BackgroundColor3 = Color3.fromRGB(133, 26, 26),
-			ButtonColor = Color3.fromRGB(184, 44, 44),
-			onButtonClick = handleLeaveSession,
-		}) or nil,
-	})
+	if shouldShowSessionDuringUI then
+		return e(React.Fragment, nil, {
+			SessionDuringUI = e(SessionDuringUI, {
+				currentSession = currentSession,
+			}),
+		})
+	end
+	return e(React.Fragment, nil, { e(HubUI) })
 end
 
 return RootUI
