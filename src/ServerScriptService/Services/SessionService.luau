@@ -13,7 +13,6 @@ local remotes = nil
 local sessionMetaByCode = {}
 local isInitialized = false
 
-
 local function fireError(player: Player, message: string)
 	if remotes then
 		remotes.sessionError:FireClient(player, { message = message })
@@ -198,10 +197,12 @@ function SessionService.handleCreateSession(player: Player, sessionName: string)
 		return
 	end
 
+	local serv_id = game.PlaceId
 	local result = SessionApi:CreateSession({
 		owner_roblox_user_id = player.UserId,
 		display_name = player.DisplayName,
 		name = sessionName,
+		owner_server_id = serv_id,
 	})
 
 	local rawCode = result and result.code
