@@ -16,4 +16,10 @@ export type LeaveSessionInput = {
 	roblox_user_id: number,
 }
 
+export type CreateUpdateVoteInput = {
+	item_id: number,
+	roblox_user_id: number,
+	value: string,
+}
+
 return DTO

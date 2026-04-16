@@ -10,9 +10,12 @@ type props = {
 }
 
 local function ItemMenu(props: props)
-	local isCreate, setIsCreate = React.useState(false)
-	local activeColor = Color3.fromRGB(106, 186, 206)
-	local unactiveColor = Color3.fromRGB(216, 216, 216)
+	local isCreate, setIsCreate = React.useState(true)
+	local activeColor = Color3.fromRGB(212, 210, 199)
+	local unactiveColor = Color3.fromRGB(85, 79, 73)
+	local activeText = Color3.fromRGB(80, 45, 16)
+	local unactiveText = Color3.fromRGB(255, 255, 255)
+
 	return e("Frame", {
 		Size = UDim2.fromScale(0.8, 0.72),
 		Position = UDim2.fromScale(0.5, 0.5),
@@ -28,36 +31,112 @@ local function ItemMenu(props: props)
 			Size = UDim2.fromScale(1, 0.2),
 			Position = UDim2.fromScale(0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0),
-			BackgroundColor3 = activeColor,
+			BackgroundTransparency = 1,
 			BorderSizePixel = 0,
 		}, {
-			CreateTab = e("TextButton", {
-				Text = "Create an Item",
+			CreateTab = e("Frame", {
 				Size = UDim2.fromScale(0.5, 1),
 				Position = UDim2.fromScale(0.25, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = isCreate and activeColor or unactiveColor,
-				TextScaled = true,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				Interactable = not isCreate,
-				[React.Event.Activated] = function()
-					setIsCreate(true)
-				end,
 				BorderSizePixel = 0,
+			}, {
+				UICorner = e("UICorner", {
+					CornerRadius = UDim.new(0, 20),
+				}),
+				BgFrame = e("Frame", {
+					Size = UDim2.fromScale(1, 1),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BorderSizePixel = 0,
+					BackgroundColor3 = isCreate and activeColor or unactiveColor,
+					ZIndex = 2,
+				}, { UICorner = e("UICorner", {
+					CornerRadius = UDim.new(0, 20),
+				}) }),
+				BottomLeft = e("Frame", {
+					Size = UDim2.fromScale(0.5, 0.5),
+					Position = UDim2.fromScale(0, 1),
+					AnchorPoint = Vector2.new(0, 1),
+					BorderSizePixel = 0,
+					BackgroundColor3 = isCreate and activeColor or unactiveColor,
+				}),
+				TopRight = e("Frame", {
+					Size = UDim2.fromScale(0.5, 0.5),
+					Position = UDim2.fromScale(1, 0),
+					AnchorPoint = Vector2.new(1, 0),
+					BorderSizePixel = 0,
+					BackgroundColor3 = unactiveColor,
+				}),
+				TabButton = e("TextButton", {
+					Text = "Create an Item",
+					Size = UDim2.fromScale(0.9, 0.7),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					TextScaled = true,
+					TextColor3 = isCreate and activeText or unactiveText,
+					Interactable = not isCreate,
+					BackgroundTransparency = 1,
+					[React.Event.Activated] = function()
+						setIsCreate(true)
+					end,
+					BorderSizePixel = 0,
+					ZIndex = 3,
+				}),
 			}),
-			ViewTab = e("TextButton", {
-				Text = "View Item(s)",
+
+			ViewTab = e("Frame", {
+				Size = UDim2.fromScale(0.5, 1),
 				Position = UDim2.fromScale(0.75, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				Size = UDim2.fromScale(0.5, 1),
 				BackgroundColor3 = not isCreate and activeColor or unactiveColor,
-				TextScaled = true,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				Interactable = isCreate,
-				[React.Event.Activated] = function()
-					setIsCreate(false)
-				end,
 				BorderSizePixel = 0,
+				ZIndex = 2,
+			}, {
+				UICorner = e("UICorner", {
+					CornerRadius = UDim.new(0, 20),
+				}),
+				BgFrame = e("Frame", {
+					Size = UDim2.fromScale(1, 1),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BorderSizePixel = 0,
+					BackgroundColor3 = not isCreate and activeColor or unactiveColor,
+					ZIndex = 2,
+				}, { UICorner = e("UICorner", {
+					CornerRadius = UDim.new(0, 20),
+				}) }),
+
+				BottomRight = e("Frame", {
+					Size = UDim2.fromScale(0.5, 0.5),
+					Position = UDim2.fromScale(1, 1),
+					AnchorPoint = Vector2.new(1, 1),
+					BorderSizePixel = 0,
+					BackgroundColor3 = not isCreate and activeColor or unactiveColor,
+				}),
+				TopLeft = e("Frame", {
+					Size = UDim2.fromScale(0.5, 0.5),
+					Position = UDim2.fromScale(0, 0),
+					AnchorPoint = Vector2.new(0, 0),
+					BorderSizePixel = 0,
+					BackgroundColor3 = unactiveColor,
+					ZIndex = 1,
+				}),
+				TabButton = e("TextButton", {
+					Size = UDim2.fromScale(0.9, 0.7),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Text = "View Item(s)",
+					BackgroundTransparency = 1,
+					TextScaled = true,
+					TextColor3 = not isCreate and activeText or unactiveText,
+					Interactable = isCreate,
+					[React.Event.Activated] = function()
+						setIsCreate(false)
+					end,
+					BorderSizePixel = 0,
+					ZIndex = 3,
+				}),
 			}),
 		}),
 		BottomFrame = e("Frame", {

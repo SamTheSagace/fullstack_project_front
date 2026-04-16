@@ -20,6 +20,7 @@ export type Session = {
 	created_at: string?,
 	updated_at: string?,
 	session_members: { SessionMember }?,
+	current_item_id: number?,
 }
 
 export type ListSessionsResponse = {
