@@ -1,46 +1,29 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 local ItemCard = require(script.Parent.ItemCard)
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
 
-local function ViewItems()
-	type Item = { itemName: string, itemDescription: string, cost: number | nil, userId: number }
+local listItemsSessionIdEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("listItemsSessionId")
 
-	local ItemList: { Item } = {
-		{
-			itemName = "Vote",
-			itemDescription = "As a user i want : click on a buttton to be able to : vote on the current Item",
-			cost = 3,
-			userId = 3,
-		},
-		{
-			itemName = "Create a new story",
-			itemDescription = "As a user i want : create a new story to be able to: let other user vote ",
-			cost = nil,
-			userId = 2,
-		},
-		{
-			itemName = "Welcome to the jungle",
-			itemDescription = "As a user i want : welcome to the jungle to be able to: ouga bouga ",
-			cost = nil,
-			userId = 2,
-		},
-		{
-			itemName = "Test of knowledge",
-			itemDescription = "As a user i want : to be able to ",
-			cost = nil,
-			userId = 3,
-		},
-		{
-			itemName = "Windows est mieux que Mac",
-			itemDescription = "As a user i want : to be able to ",
-			cost = nil,
-			userId = 3,
-		},
-		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil, userId = 3 },
-		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil, userId = 3 },
-	}
+local CommonTypes = require(ReplicatedStorage.Types.Common)
+type Item = CommonTypes.Item
+
+local function ViewItems()
+	local ItemList, setItemList = React.useState({} :: { Item })
+
+	React.useEffect(function()
+		local onListItems = listItemsSessionIdEvent.OnClientEvent:Connect(function(items)
+			if items == nil then
+				setItemList({})
+				return
+			end
+
+			setItemList(items)
+		end)
+		return function()
+			onListItems:Disconnect()
+		end
+	end, {})
 
 	local children = {
 		Layout = e("UIListLayout", {
@@ -53,13 +36,26 @@ local function ViewItems()
 		}),
 	}
 
+	local hasItems = false
 	for index, value in ipairs(ItemList) do
+		hasItems = true
 		children[`Card_{index}`] = e(ItemCard, {
-			title = value.itemName,
-			description = value.itemDescription,
+			title = value.title,
+			description = value.description,
 			cost = value.cost,
-			LayoutOrder = index,
-			userId = value.userId,
+			LayoutOrder = value.position,
+			userId = value.created_by_roblox_user_id,
+		})
+	end
+
+	if not hasItems then
+		children.EmptyState = e("TextLabel", {
+			Size = UDim2.fromOffset(200, 50),
+			BackgroundTransparency = 1,
+			Text = "No items in this session",
+			Font = Enum.Font.Gotham,
+			TextSize = 16,
+			TextColor3 = Color3.fromRGB(255, 255, 255),
 		})
 	end
 

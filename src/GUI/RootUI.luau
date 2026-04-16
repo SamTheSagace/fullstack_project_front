@@ -10,7 +10,7 @@ local e = React.createElement
 
 local eventsFolder = ReplicatedStorage:WaitForChild("Events")
 local sessionStateEvent = eventsFolder:WaitForChild("sessionState")
-local sessionErrorEvent = eventsFolder:WaitForChild("sessionError")
+local errorEventEvent = eventsFolder:WaitForChild("errorEvent")
 
 local function isPlayerInSession(snapshot, userId: number): boolean
 	if type(snapshot) ~= "table" or type(snapshot.members) ~= "table" then
@@ -36,12 +36,19 @@ local function RootUI()
 
 	React.useEffect(function()
 		local sessionStateConnection = sessionStateEvent.OnClientEvent:Connect(function(snapshot)
+			if type(snapshot) ~= "table" then
+				setCurrentSession(nil)
+				return
+			end
+
 			if isPlayerInSession(snapshot, localPlayer.UserId) then
 				setCurrentSession(snapshot)
+			else
+				setCurrentSession(nil)
 			end
 		end)
 
-		local sessionErrorConnection = sessionErrorEvent.OnClientEvent:Connect(function(err)
+		local errorEventConnection = errorEventEvent.OnClientEvent:Connect(function(err)
 			local message = if type(err) == "table" then err.message else tostring(err)
 			if message == "Session closed by owner" or message == "You are not in a session" then
 				setCurrentSession(nil)
@@ -50,7 +57,7 @@ local function RootUI()
 
 		return function()
 			sessionStateConnection:Disconnect()
-			sessionErrorConnection:Disconnect()
+			errorEventConnection:Disconnect()
 		end
 	end, { localPlayer })
 

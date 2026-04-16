@@ -7,7 +7,7 @@ type JoinSessionInput = DTO.JoinSessionInput
 type LeaveSessionInput = DTO.LeaveSessionInput
 type CreatUpdateVoteInput = DTO.CreateUpdateVoteInput
 
-local URL_API = "https://nonlucidly-strangerlike-marylou.ngrok-free.dev/api/"
+local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
 local URL_SESSION = URL_API .. "sessions/"
 
 local SessionApi = {}
@@ -61,6 +61,7 @@ function SessionApi:LeaveSession(code: string, data: LeaveSessionInput)
 	return HttpService:JSONDecode(response)
 end
 
+--- Vote API
 function SessionApi:CreateUpdateVote(createUpdateVoteInput: CreatUpdateVoteInput)
 	local jsonData = HttpService:JSONEncode(createUpdateVoteInput)
 	local success, response = pcall(function()
@@ -68,6 +69,18 @@ function SessionApi:CreateUpdateVote(createUpdateVoteInput: CreatUpdateVoteInput
 	end)
 	if not success then
 		warn("Failed to create session:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+--- 
+
+function SessionApi:StartSession(code: string)
+	local success, response = pcall(function()
+		return HttpService:PostAsync(URL_SESSION .. code .. "/start/", "", Enum.HttpContentType.ApplicationJson)
+	end)
+	if not success then
+		warn("Failed to start session:", response)
 		return nil
 	end
 	return HttpService:JSONDecode(response)
