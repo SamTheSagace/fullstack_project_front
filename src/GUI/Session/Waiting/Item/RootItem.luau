@@ -7,7 +7,7 @@ local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local e = React.createElement
 
 local function RootUI()
-	local isMenuVisible, setIsMenuVisible = React.useState(false)
+	local isMenuVisible, setIsMenuVisible = React.useState(true)
 
 	return e(React.Fragment, nil, {
 		OpenSessionMenuButton = e(CustomButton, {

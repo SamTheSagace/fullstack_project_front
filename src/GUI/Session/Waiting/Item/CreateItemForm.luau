@@ -23,14 +23,11 @@ local function CreateItemForm()
 		BackgroundTransparency = 1,
 	}, {
 		Corner = e("UICorner", {
-			CornerRadius = UDim.new(0, 5),
-		}),
-		Border = e("UIStroke", {
-			Color = Color3.fromRGB(255, 255, 255),
+			CornerRadius = UDim.new(0, 0.5),
 		}),
 		NameFrame = e("Frame", {
 			Size = UDim2.fromScale(1, 0.25),
-			Position = UDim2.fromScale(0.5, 0),
+			Position = UDim2.fromScale(0.5, 0.05),
 			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundTransparency = 1,
 		}, {
@@ -51,7 +48,7 @@ local function CreateItemForm()
 				AnchorPoint = Vector2.new(0.5, 1),
 				Size = UDim2.fromScale(1, 0.7),
 				PlaceholderText = "Placeholder",
-				Text = ItemDescription,
+				Text = ItemName,
 				ClearTextOnFocus = false,
 				Font = Enum.Font.Gotham,
 				TextSize = 16,
@@ -61,13 +58,13 @@ local function CreateItemForm()
 				TextColor3 = Color3.fromRGB(255, 255, 255),
 				PlaceholderColor3 = Color3.fromRGB(196, 206, 218),
 				[React.Change.Text] = function(textBox)
-					setItemDescription(textBox.Text)
+					setItemName(textBox.Text)
 				end,
 			}),
 		}),
 		DescriptionFrame = e("Frame", {
-			Size = UDim2.fromScale(1, 0.5),
-			Position = UDim2.fromScale(0.5, 0.25),
+			Size = UDim2.fromScale(1, 0.45),
+			Position = UDim2.fromScale(0.5, 0.3),
 			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundTransparency = 1,
 		}, {
@@ -88,7 +85,7 @@ local function CreateItemForm()
 				AnchorPoint = Vector2.new(0.5, 1),
 				Size = UDim2.fromScale(1, 0.75),
 				PlaceholderText = "Description Placeholder",
-				Text = ItemName,
+				Text = ItemDescription,
 				ClearTextOnFocus = false,
 				Font = Enum.Font.Gotham,
 				TextSize = 16,
@@ -98,7 +95,7 @@ local function CreateItemForm()
 				TextColor3 = Color3.fromRGB(255, 255, 255),
 				PlaceholderColor3 = Color3.fromRGB(196, 206, 218),
 				[React.Change.Text] = function(textBox)
-					setItemName(textBox.Text)
+					setItemDescription(textBox.Text)
 				end,
 			}),
 		}),
