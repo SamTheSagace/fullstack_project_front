@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 -- local SessionCard = require(script.Parent.SessionCard)
@@ -6,17 +7,28 @@ local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
 
+local confirmVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("confirmVote")
+
 type props = {
 	isVisible: boolean,
+	currentItemId: number,
 }
 
 local function CardMenu(props: props)
-	local numbersList = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }
+	local numbersList = { 1, 2, 3, 5, 8, 13 }
 	-- This component make an array of cards based on a list of number, to select one from it
 	local selectedValue, setSelectedValue = React.useState(nil)
 	local Finished, setFinished = React.useState(false)
 	local isInteractable = selectedValue ~= nil
-	
+
+	local function handleConfirmVote()
+		confirmVoteEvent:FireServer({
+			itemId = props.currentItemId,
+			robloxUserId = Players.LocalPlayer.UserId,
+			value = selectedValue,
+		})
+	end
+
 	local cardsFrame = {
 		Layout = e("UIListLayout", {
 			SortOrder = Enum.SortOrder.LayoutOrder,
@@ -51,13 +63,18 @@ local function CardMenu(props: props)
 			cardsFrame,
 		}),
 		OpenSessionMenuButton = e(CustomButton, {
-			Text = "Finish Vote",
-			Position = UDim2.fromScale(0.5, 0.925),
+			Text = if Finished then "Change Vote" else "Finish Vote",
+			Position = UDim2.fromScale(0.5, 0.1),
 			Size = UDim2.fromScale(0.2, 0.1),
 			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
 			ButtonColor = Color3.fromRGB(0, 122, 255),
+			Interactable = isInteractable,
 			onButtonClick = function()
-				setFinished(not Finished)
+				local newFinished = not Finished
+				setFinished(newFinished)
+				if newFinished then
+					handleConfirmVote()
+				end
 			end,
 		}),
 	})

@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 
 local Services = script.Parent.Parent:WaitForChild("Services")
 local SessionService = require(Services:WaitForChild("SessionService"))
+local VotesService = require(Services:WaitForChild("VotesService"))
 
 local eventsFolder = ReplicatedStorage:FindFirstChild("Events")
 if not eventsFolder then
@@ -23,12 +24,15 @@ local function ensureRemoteEvent(name: string): RemoteEvent
 	return remote
 end
 
+-- Session events
 local listSessions = ensureRemoteEvent("listSessions")
 local createSession = ensureRemoteEvent("createSession")
 local joinSession = ensureRemoteEvent("joinSession")
 local leaveSession = ensureRemoteEvent("leaveSession")
 local sessionState = ensureRemoteEvent("sessionState")
 local sessionError = ensureRemoteEvent("sessionError")
+-- Votes events
+local confirmVote = ensureRemoteEvent("confirmVote")
 
 SessionService.init({
 	listSessions = listSessions,
@@ -57,4 +61,8 @@ end)
 
 Players.PlayerRemoving:Connect(function(player)
 	SessionService.handlePlayerRemoving(player)
+end)
+
+confirmVote.OnServerEvent:Connect(function(player, payload)
+	VotesService.confirmVote(player, payload)
 end)

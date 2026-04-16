@@ -1,6 +1,5 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
@@ -14,7 +13,7 @@ type props = {
 	index: number,
 }
 
-local function SessionCard(props: props)
+local function SessionEntry(props: props)
 	local playerIds = SessionHelpers.getSessionPlayerIds(props.sessionData)
 	local ThumbType = Enum.ThumbnailType.HeadShot
 	local ThumbSize = Enum.ThumbnailSize.Size150x150
@@ -103,4 +102,4 @@ local function SessionCard(props: props)
 	})
 end
 
-return SessionCard
+return SessionEntry

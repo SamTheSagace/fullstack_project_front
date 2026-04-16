@@ -1,12 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local SessionCard = require(script.Parent.SessionCard)
+local HubUI = require(script.Parent.HubUI)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 
 return function(parent)
 	local root = ReactRoblox.createRoot(parent)
-	local app = React.createElement(SessionCard)
+	local app = React.createElement(HubUI)
 	root:render(app)
 
 	return function()
