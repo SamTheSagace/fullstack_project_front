@@ -81,6 +81,7 @@ local function broadcastSessionState(code: string)
 		name = (meta and meta.name) or "Session",
 		phase = "waiting",
 		hostUserId = (meta and meta.hostUserId) or (members[1] and members[1].userId) or 0,
+		current_item_id = 1,
 		members = members,
 		seatMap = {},
 	}
