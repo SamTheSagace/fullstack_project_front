@@ -1,31 +1,45 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local ItemCard = require(script.Parent.ItemCard)
-local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
 
 local function ViewItems()
-	local ItemList = {
+	type Item = { itemName: string, itemDescription: string, cost: number | nil, userId: number }
+
+	local ItemList: { Item } = {
 		{
 			itemName = "Vote",
 			itemDescription = "As a user i want : click on a buttton to be able to : vote on the current Item",
 			cost = 3,
+			userId = 3,
 		},
 		{
 			itemName = "Create a new story",
 			itemDescription = "As a user i want : create a new story to be able to: let other user vote ",
 			cost = nil,
+			userId = 2,
 		},
 		{
 			itemName = "Welcome to the jungle",
 			itemDescription = "As a user i want : welcome to the jungle to be able to: ouga bouga ",
 			cost = nil,
+			userId = 2,
 		},
-		{ itemName = "Test of knowledge", itemDescription = "As a user i want : to be able to ", cost = nil },
-		{ itemName = "Windows est mieux que Mac", itemDescription = "As a user i want : to be able to ", cost = nil },
-		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil },
-		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil },
+		{
+			itemName = "Test of knowledge",
+			itemDescription = "As a user i want : to be able to ",
+			cost = nil,
+			userId = 3,
+		},
+		{
+			itemName = "Windows est mieux que Mac",
+			itemDescription = "As a user i want : to be able to ",
+			cost = nil,
+			userId = 3,
+		},
+		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil, userId = 3 },
+		{ itemName = "test", itemDescription = "As a user i want : to be able to ", cost = nil, userId = 3 },
 	}
 
 	local children = {
@@ -35,7 +49,7 @@ local function ViewItems()
 			Wraps = true,
 			VerticalAlignment = Enum.VerticalAlignment.Top,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			Padding = UDim.new(0.05, 0),
+			Padding = UDim.new(0, 30),
 		}),
 	}
 
@@ -45,11 +59,14 @@ local function ViewItems()
 			description = value.itemDescription,
 			cost = value.cost,
 			LayoutOrder = index,
+			userId = value.userId,
 		})
 	end
 
 	local ItemFrame = e("ScrollingFrame", {
 		Size = UDim2.fromScale(1, 1),
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		ScrollBarThickness = 6,
 		BackgroundTransparency = 1,
@@ -66,8 +83,8 @@ local function ViewItems()
 		}),
 		MainFrame = e("Frame", {
 			Size = UDim2.fromScale(1, 1),
-			Position = UDim2.fromScale(0.5, 1),
-			AnchorPoint = Vector2.new(0.5, 1),
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 		}, {
 			ItemFrame = ItemFrame,

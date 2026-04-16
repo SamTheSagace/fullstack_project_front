@@ -16,6 +16,10 @@ local function CreateItemForm()
 		print(ItemName, ItemDescription)
 	end
 	local canCreate = ItemName ~= "" and ItemDescription ~= ""
+	local unactiveColor = Color3.fromRGB(79, 104, 110)
+	local textColor = Color3.fromRGB(80, 45, 16)
+	local PlaceHolderTextColor = Color3.fromRGB(92, 71, 55)
+
 	return e("Frame", {
 		Size = UDim2.fromScale(1, 1),
 		Position = UDim2.fromScale(0.5, 0.5),
@@ -39,27 +43,37 @@ local function CreateItemForm()
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
 				TextSize = 18,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
+				TextColor3 = textColor,
 				TextYAlignment = Enum.TextYAlignment.Top,
 				TextXAlignment = Enum.TextXAlignment.Center,
 			}),
-			NameInput = e("TextBox", {
+			NameInputFrame = e("Frame", {
+				BackgroundTransparency = 1,
 				Position = UDim2.fromScale(0.5, 1),
 				AnchorPoint = Vector2.new(0.5, 1),
-				Size = UDim2.fromScale(1, 0.7),
-				PlaceholderText = "Placeholder",
-				Text = ItemName,
-				ClearTextOnFocus = false,
-				Font = Enum.Font.Gotham,
-				TextSize = 16,
-				TextYAlignment = Enum.TextYAlignment.Top,
-				TextXAlignment = Enum.TextXAlignment.Center,
-				BackgroundTransparency = 1,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				PlaceholderColor3 = Color3.fromRGB(196, 206, 218),
-				[React.Change.Text] = function(textBox)
-					setItemName(textBox.Text)
-				end,
+				Size = UDim2.fromScale(0.5, 0.7),
+			}, {
+				NameInput = e("TextBox", {
+					TextColor3 = textColor,
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.fromScale(1, 0.5),
+					PlaceholderText = "Placeholder",
+					Text = ItemName,
+					ClearTextOnFocus = false,
+					Font = Enum.Font.Gotham,
+					TextSize = 16,
+					TextYAlignment = Enum.TextYAlignment.Center,
+					TextXAlignment = Enum.TextXAlignment.Center,
+					BackgroundTransparency = 0.5,
+					BackgroundColor3 = unactiveColor,
+					BorderSizePixel = 0,
+					PlaceholderColor3 = PlaceHolderTextColor,
+					[React.Change.Text] = function(textBox)
+						setItemName(textBox.Text)
+					end,
+					ZIndex = 3,
+				}),
 			}),
 		}),
 		DescriptionFrame = e("Frame", {
@@ -76,14 +90,14 @@ local function CreateItemForm()
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
 				TextSize = 18,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
+				TextColor3 = textColor,
 				TextXAlignment = Enum.TextXAlignment.Center,
 				TextYAlignment = Enum.TextYAlignment.Top,
 			}),
 			NameInput = e("TextBox", {
 				Position = UDim2.fromScale(0.5, 1),
 				AnchorPoint = Vector2.new(0.5, 1),
-				Size = UDim2.fromScale(1, 0.75),
+				Size = UDim2.fromScale(0.5, 0.75),
 				PlaceholderText = "Description Placeholder",
 				Text = ItemDescription,
 				ClearTextOnFocus = false,
@@ -91,9 +105,11 @@ local function CreateItemForm()
 				TextSize = 16,
 				TextYAlignment = Enum.TextYAlignment.Top,
 				TextXAlignment = Enum.TextXAlignment.Center,
-				BackgroundTransparency = 1,
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				PlaceholderColor3 = Color3.fromRGB(196, 206, 218),
+				BackgroundTransparency = 0.5,
+				BackgroundColor3 = unactiveColor,
+				BorderSizePixel = 0,
+				TextColor3 = textColor,
+				PlaceholderColor3 = PlaceHolderTextColor,
 				[React.Change.Text] = function(textBox)
 					setItemDescription(textBox.Text)
 				end,
@@ -106,12 +122,13 @@ local function CreateItemForm()
 			BackgroundTransparency = 1,
 		}, {
 			Cancel = e(CustomButton, {
-				Text = "Cancel",
+				Text = "Reset",
 				Position = UDim2.fromScale(0.25, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Size = UDim2.fromScale(0.25, 0.5),
-				BackgroundColor3 = Color3.fromRGB(61, 61, 61),
-				ButtonColor = Color3.fromRGB(163, 163, 163),
+				BackgroundColor3 = canCreate and Color3.fromRGB(109, 61, 61) or Color3.fromRGB(61, 61, 61),
+				ButtonColor = canCreate and Color3.fromRGB(199, 139, 139) or Color3.fromRGB(107, 107, 107),
+				Interactable = canCreate,
 				onButtonClick = function()
 					handleReset()
 				end,
@@ -122,7 +139,7 @@ local function CreateItemForm()
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Size = UDim2.fromScale(0.25, 0.5),
 				BackgroundColor3 = canCreate and Color3.fromRGB(18, 61, 90) or Color3.fromRGB(61, 61, 61),
-				ButtonColor = canCreate and Color3.fromRGB(50, 128, 184) or Color3.fromRGB(163, 163, 163),
+				ButtonColor = canCreate and Color3.fromRGB(50, 128, 184) or Color3.fromRGB(107, 107, 107),
 				Interactable = canCreate,
 				onButtonClick = function()
 					handleCreate()
