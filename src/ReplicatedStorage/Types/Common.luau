@@ -21,6 +21,7 @@ export type Session = {
 	updated_at: string?,
 	session_members: { SessionMember }?,
 	current_item_id: number?,
+	items: { Item }?,
 }
 
 export type Item = {
