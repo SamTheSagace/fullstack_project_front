@@ -26,4 +26,24 @@ export type ListSessionsResponse = {
 	sessions: { Session }?,
 }
 
+export type SessionSnapshotMember = {
+	userId: number,
+	name: string,
+	participate: boolean,
+	isReady: boolean,
+	isSeated: boolean,
+}
+
+export type SessionSnapshot = {
+	code: string,
+	name: string,
+	phase: string,
+	hostUserId: number,
+	members: { SessionSnapshotMember },
+	seatMap: { [number]: string },
+	playerCount: number,
+	seatedCount: number,
+	readyCount: number,
+}
+
 return CommonTypes

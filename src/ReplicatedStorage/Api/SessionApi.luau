@@ -60,4 +60,15 @@ function SessionApi:LeaveSession(code: string, data: LeaveSessionInput)
 	return HttpService:JSONDecode(response)
 end
 
+function SessionApi:StartSession(code: string)
+	local success, response = pcall(function()
+		return HttpService:PostAsync(URL_SESSION .. code .. "/start/", "", Enum.HttpContentType.ApplicationJson)
+	end)
+	if not success then
+		warn("Failed to start session:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+
 return SessionApi

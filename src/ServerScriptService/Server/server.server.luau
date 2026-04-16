@@ -27,6 +27,8 @@ local listSessions = ensureRemoteEvent("listSessions")
 local createSession = ensureRemoteEvent("createSession")
 local joinSession = ensureRemoteEvent("joinSession")
 local leaveSession = ensureRemoteEvent("leaveSession")
+local toggleReady = ensureRemoteEvent("toggleReady")
+local startSession = ensureRemoteEvent("startSession")
 local sessionState = ensureRemoteEvent("sessionState")
 local sessionError = ensureRemoteEvent("sessionError")
 
@@ -35,6 +37,8 @@ SessionService.init({
 	createSession = createSession,
 	joinSession = joinSession,
 	leaveSession = leaveSession,
+	toggleReady = toggleReady,
+	startSession = startSession,
 	sessionState = sessionState,
 	sessionError = sessionError,
 })
@@ -53,6 +57,14 @@ end)
 
 leaveSession.OnServerEvent:Connect(function(player)
 	SessionService.handleLeaveSession(player)
+end)
+
+toggleReady.OnServerEvent:Connect(function(player)
+	SessionService.handleToggleReady(player)
+end)
+
+startSession.OnServerEvent:Connect(function(player)
+	SessionService.handleStartSession(player)
 end)
 
 Players.PlayerRemoving:Connect(function(player)

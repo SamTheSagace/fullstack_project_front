@@ -36,8 +36,15 @@ local function RootUI()
 
 	React.useEffect(function()
 		local sessionStateConnection = sessionStateEvent.OnClientEvent:Connect(function(snapshot)
+			if type(snapshot) ~= "table" then
+				setCurrentSession(nil)
+				return
+			end
+
 			if isPlayerInSession(snapshot, localPlayer.UserId) then
 				setCurrentSession(snapshot)
+			else
+				setCurrentSession(nil)
 			end
 		end)
 
