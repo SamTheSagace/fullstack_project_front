@@ -6,8 +6,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local e = React.createElement
 
-local function RootUI(props)
-	local isMenuVisible, setIsMenuVisible = React.useState(true)
+local function RootUIItem(props)
 	return e(React.Fragment, nil, {
 		OpenSessionMenuButton = e(CustomButton, {
 			Text = "Item Menu",
@@ -27,4 +26,4 @@ local function RootUI(props)
 	})
 end
 
-return RootUI
+return RootUIItem

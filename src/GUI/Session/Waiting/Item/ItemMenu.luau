@@ -1,9 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
 local CreateItemForm = require(script.Parent.CreateItemForm)
 local ViewItems = require(script.Parent.ViewItem)
-local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
 

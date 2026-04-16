@@ -7,7 +7,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local SessionCode = require(StarterGui.GUI.Components.SessionCode)
 local WaitingStateButton = require(StarterGui.GUI.Components.WaitingStateButton)
-local RootItem = require(StarterGui.GUI.Session.Waiting.Item.RootItem)
+local RootUIItem = require(StarterGui.GUI.Session.Waiting.Item.RootUIItem)
 local e = React.createElement
 local CommonTypes = require(ReplicatedStorage.Types.Common)
 type SessionSnapshot = CommonTypes.SessionSnapshot
@@ -123,7 +123,7 @@ local function SessionWaitingUI(props: Props)
 			isMenuVisible = isMenuVisible,
 		}),
 
-		RootItem = e(RootItem, {
+		RootUIItem = e(RootUIItem, {
 			Position = UDim2.fromScale(0.05, 0.925),
 			AnchorPoint = Vector2.new(0, 0.5),
 			isMenuVisible = isMenuVisible,
