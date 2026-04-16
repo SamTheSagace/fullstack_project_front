@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 local DataService = require(ReplicatedStorage.Packages.DataService).server
@@ -12,67 +13,6 @@ local SessionService = {}
 local remotes = nil
 local sessionMetaByCode = {}
 local isInitialized = false
-
-local function fireError(player: Player, message: string)
-	if remotes then
-		remotes.sessionError:FireClient(player, { message = message })
-	end
-end
-
-local function setPlayerSeatedState(player: Player, isSeated: boolean)
-	DataService:update(player, "is_seated", function()
-		return isSeated
-	end)
-end
-
-local function setPlayerReadyState(player: Player, isReady: boolean)
-	DataService:update(player, "is_ready", function()
-		return isReady
-	end)
-end
-
-local function setPlayerSessionState(player: Player, code: string, isSeated: boolean)
-	DataService:update(player, "session_code", function()
-		return code
-	end)
-	setPlayerSeatedState(player, isSeated)
-	setPlayerReadyState(player, false)
-	DataService:update(player, "current_vote", function()
-		return nil
-	end)
-end
-
-local function clearPlayerSessionState(player: Player)
-	DataService:update(player, "session_code", function()
-		return nil
-	end)
-	setPlayerSeatedState(player, false)
-	setPlayerReadyState(player, false)
-	DataService:update(player, "current_vote", function()
-		return nil
-	end)
-end
-
-local function getPlayersInSession(code: string): { Player }
-	local list = {}
-	for _, player in ipairs(Players:GetPlayers()) do
-		if DataService:get(player, "session_code") == code then
-			table.insert(list, player)
-		end
-	end
-	return list
-end
-
-local function syncSessionSeatingState(code: string)
-	local seatMap = RoomService.getSeatMap(code)
-	for _, player in ipairs(getPlayersInSession(code)) do
-		local isSeated = seatMap[player.UserId] ~= nil
-		setPlayerSeatedState(player, isSeated)
-		if not isSeated then
-			setPlayerReadyState(player, false)
-		end
-	end
-end
 
 local function isSessionOwner(player: Player, code: string): boolean
 	local meta = sessionMetaByCode[code]
@@ -90,7 +30,7 @@ local function getSessionPhase(code: string): string
 end
 
 local function canOwnerStartSession(code: string): (boolean, string?)
-	local players = getPlayersInSession(code)
+	local players = SessionPlayerService.getPlayersInSession(code)
 	if #players == 0 then
 		return false, "No players are in this session"
 	end
@@ -117,7 +57,7 @@ local function broadcastSessionState(code: string)
 	local members = {}
 	local readyCount = 0
 	local seatedCount = 0
-	for _, player in ipairs(getPlayersInSession(code)) do
+	for _, player in ipairs(SessionPlayerService.getPlayersInSession(code)) do
 		local isReady = DataService:get(player, "is_ready") == true
 		local isSeated = DataService:get(player, "is_seated") == true
 		if isReady then
@@ -150,7 +90,7 @@ local function broadcastSessionState(code: string)
 		readyCount = readyCount,
 	}
 
-	for _, player in ipairs(getPlayersInSession(code)) do
+	for _, player in ipairs(SessionPlayerService.getPlayersInSession(code)) do
 		remotes.sessionState:FireClient(player, snapshot)
 	end
 end
@@ -184,10 +124,10 @@ local function leaveBackendSession(player: Player, code: string)
 end
 
 local function teardownSession(code: string)
-	for _, player in ipairs(getPlayersInSession(code)) do
+	for _, player in ipairs(SessionPlayerService.getPlayersInSession(code)) do
 		RoomService.teleportPlayerToSpawn(player)
-		clearPlayerSessionState(player)
-		fireError(player, "Session closed by owner")
+		SessionPlayerService.clearPlayerSessionState(player)
+		Utils.fireError(player, "Session closed by owner", remotes)
 	end
 
 	RoomService.destroyRoomForSession(code)
@@ -220,31 +160,29 @@ local function joinLocalSession(player: Player, code: string, isOwner: boolean):
 
 	local roomModel, roomError = RoomService.ensureRoomForSession(code)
 	if roomModel == nil then
-		fireError(player, roomError or "Could not create/load room")
+		Utils.fireError(player, roomError or "Could not create/load room", remotes)
 		return false
 	end
 
-	print("Join Local Session:", code, isOwner)
-
-	setPlayerSessionState(player, code, false)
+	SessionPlayerService.setPlayerSessionState(player, code, sessionMetaByCode[code].sessionId, false)
 	local teleported = RoomService.teleportPlayerToSessionRoom(player, code, isOwner)
 	if not teleported then
-		clearPlayerSessionState(player)
-		fireError(player, "Could not move player into the session room")
+		SessionPlayerService.clearPlayerSessionState(player)
+		Utils.fireError(player, "Could not move player into the session room", remotes)
 		return false
 	end
 
 	if isOwner then
 		local seated, seatError = RoomService.seatPlayerInOwnerChair(player, code)
 		if not seated then
-			clearPlayerSessionState(player)
+			SessionPlayerService.clearPlayerSessionState(player)
 			RoomService.teleportPlayerToSpawn(player)
-			fireError(player, seatError or "Could not seat the session owner")
+			Utils.fireError(player, seatError or "Could not seat the session owner", remotes)
 			return false
 		end
 	end
 
-	syncSessionSeatingState(code)
+	SessionPlayerService.syncSessionSeatingState(code)
 	broadcastSessionState(code)
 	return true
 end
@@ -266,7 +204,7 @@ function SessionService.init(remoteMap)
 	})
 
 	RoomService.setSeatStateChangedHandler(function(code: string)
-		syncSessionSeatingState(code)
+		SessionPlayerService.syncSessionSeatingState(code)
 		broadcastSessionState(code)
 	end)
 
@@ -282,7 +220,7 @@ end
 
 function SessionService.handleCreateSession(player: Player, sessionName: string)
 	if type(sessionName) ~= "string" or Utils.trim(sessionName) == "" then
-		fireError(player, "Session name is required")
+		Utils.fireError(player, "Session name is required", remotes)
 		return
 	end
 
@@ -296,7 +234,7 @@ function SessionService.handleCreateSession(player: Player, sessionName: string)
 
 	local rawCode = result and result.code
 	if type(rawCode) ~= "string" then
-		fireError(player, "Session creation failed")
+		Utils.fireError(player, "Session creation failed", remotes)
 		return
 	end
 
@@ -322,52 +260,52 @@ end
 function SessionService.handleToggleReady(player: Player)
 	local code = getPlayerSessionCode(player)
 	if code == nil then
-		fireError(player, "You are not in a session")
+		Utils.fireError(player, "You are not in a session", remotes)
 		return
 	end
 
 	if getSessionPhase(code) ~= "waiting" then
-		fireError(player, "The session has already started")
+		Utils.fireError(player, "The session has already started", remotes)
 		return
 	end
 
 	if isSessionOwner(player, code) then
-		fireError(player, "The owner starts the session directly")
+		Utils.fireError(player, "The owner starts the session directly", remotes)
 		return
 	end
 
 	if DataService:get(player, "is_seated") ~= true then
-		fireError(player, "You must be seated before getting ready")
+		Utils.fireError(player, "You must be seated before getting ready", remotes)
 		return
 	end
 
 	local nextReadyState = DataService:get(player, "is_ready") ~= true
-	setPlayerReadyState(player, nextReadyState)
+	SessionPlayerService.setPlayerReadyState(player, nextReadyState)
 	broadcastSessionState(code)
 end
 
 function SessionService.handleStartSession(player: Player)
 	local code = getPlayerSessionCode(player)
 	if code == nil then
-		fireError(player, "You are not in a session")
+		Utils.fireError(player, "You are not in a session", remotes)
 		return
 	end
 
 	if not isSessionOwner(player, code) then
-		fireError(player, "Only the owner can start the session")
+		Utils.fireError(player, "Only the owner can start the session", remotes)
 		return
 	end
 
 	if getSessionPhase(code) ~= "waiting" then
-		fireError(player, "The session has already started")
+		Utils.fireError(player, "The session has already started", remotes)
 		return
 	end
 
-	syncSessionSeatingState(code)
+	SessionPlayerService.syncSessionSeatingState(code)
 
 	local canStart, startError = canOwnerStartSession(code)
 	if not canStart then
-		fireError(player, startError or "Session cannot be started yet")
+		Utils.fireError(player, startError or "Session cannot be started yet", remotes)
 		broadcastSessionState(code)
 		return
 	end
@@ -382,25 +320,25 @@ end
 
 function SessionService.handleJoinSession(player: Player, payload)
 	if type(payload) ~= "table" then
-		fireError(player, "Invalid join payload")
+		Utils.fireError(player, "Invalid join payload", remotes)
 		return
 	end
 
 	local code = payload.code
 	if type(code) ~= "string" then
-		fireError(player, "Invalid session code")
+		Utils.fireError(player, "Invalid session code", remotes)
 		return
 	end
 
 	local cleanedCode = string.upper(Utils.trim(code))
 	if cleanedCode == "" then
-		fireError(player, "Session code is required")
+		Utils.fireError(player, "Session code is required", remotes)
 		return
 	end
 
 	local joinedBackend = joinBackendSession(player, cleanedCode)
 	if not joinedBackend then
-		fireError(player, "Failed to join session")
+		Utils.fireError(player, "Failed to join session", remotes)
 		return
 	end
 
@@ -413,7 +351,7 @@ end
 function SessionService.handleLeaveSession(player: Player): boolean
 	local code = getPlayerSessionCode(player)
 	if code == nil then
-		fireError(player, "You are not in a session")
+		Utils.fireError(player, "You are not in a session", remotes)
 		return false
 	end
 
@@ -427,12 +365,12 @@ function SessionService.handleLeaveSession(player: Player): boolean
 		return true
 	end
 
-	clearPlayerSessionState(player)
+	SessionPlayerService.clearPlayerSessionState(player)
 	RoomService.teleportPlayerToSpawn(player)
 	if remotes then
 		remotes.sessionState:FireClient(player, nil)
 	end
-	syncSessionSeatingState(code)
+	SessionPlayerService.syncSessionSeatingState(code)
 	broadcastSessionState(code)
 	return true
 end
@@ -454,8 +392,8 @@ function SessionService.handlePlayerRemoving(player: Player)
 	end
 
 	RoomService.releasePlayerSeatLock(player)
-	clearPlayerSessionState(player)
-	syncSessionSeatingState(code)
+	SessionPlayerService.clearPlayerSessionState(player)
+	SessionPlayerService.syncSessionSeatingState(code)
 	broadcastSessionState(code)
 end
 

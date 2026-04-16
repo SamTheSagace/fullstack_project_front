@@ -1,7 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Services = script.Parent.Parent:WaitForChild("Services")
+local ItemService = require(ServerScriptService.Services.ItemService)
 local SessionService = require(Services:WaitForChild("SessionService"))
 local VotesService = require(Services:WaitForChild("VotesService"))
 
@@ -24,6 +26,9 @@ local function ensureRemoteEvent(name: string): RemoteEvent
 	return remote
 end
 
+-- Global events
+local errorEvent = ensureRemoteEvent("errorEvent")
+
 -- Session events
 local listSessions = ensureRemoteEvent("listSessions")
 local createSession = ensureRemoteEvent("createSession")
@@ -32,11 +37,17 @@ local leaveSession = ensureRemoteEvent("leaveSession")
 local toggleReady = ensureRemoteEvent("toggleReady")
 local startSession = ensureRemoteEvent("startSession")
 local sessionState = ensureRemoteEvent("sessionState")
-local sessionError = ensureRemoteEvent("sessionError")
+
 -- Votes events
 local confirmVote = ensureRemoteEvent("confirmVote")
 
+-- Item events
+local listItemsSessionId = ensureRemoteEvent("listItemsSessionId")
+local createItem = ensureRemoteEvent("createItem")
+local deleteItem = ensureRemoteEvent("deleteItem")
+
 SessionService.init({
+	errorEvent = errorEvent,
 	listSessions = listSessions,
 	createSession = createSession,
 	joinSession = joinSession,
@@ -44,7 +55,18 @@ SessionService.init({
 	toggleReady = toggleReady,
 	startSession = startSession,
 	sessionState = sessionState,
-	sessionError = sessionError,
+})
+
+ItemService.init({
+	errorEvent = errorEvent,
+	listItemsSessionId = listItemsSessionId,
+	createItem = createItem,
+	deleteItem = deleteItem,
+})
+
+VotesService.init({
+	errorEvent = errorEvent,
+	confirmVote = confirmVote,
 })
 
 listSessions.OnServerEvent:Connect(function(player)
@@ -78,3 +100,16 @@ end)
 confirmVote.OnServerEvent:Connect(function(player, payload)
 	VotesService.confirmVote(player, payload)
 end)
+
+listItemsSessionId.OnServerEvent:Connect(function(player)
+	ItemService.handleListItemsBySessionId(player)
+end)
+
+createItem.OnServerEvent:Connect(function(player, payload)
+	ItemService.handleCreateItem(player, payload)
+end)
+
+deleteItem.OnServerEvent:Connect(function(player, payload)
+	ItemService.handleDeleteItem(player, payload)
+end)
+

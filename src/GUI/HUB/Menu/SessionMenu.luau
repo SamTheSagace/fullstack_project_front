@@ -69,7 +69,6 @@ local function SessionMenu(props: props)
 		end
 		createSessionEvent:FireServer(cleanedName)
 		setSessionName("")
-		listSessionsEvent:FireServer()
 	end
 
 	return e("Frame", {

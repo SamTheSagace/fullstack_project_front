@@ -23,6 +23,15 @@ export type Session = {
 	current_item_id: number?,
 }
 
+export type Item = {
+	created_by_roblox_user_id: number,
+    title: string,
+    description: string,
+    position: number,
+    status: string,
+	cost: number | nil,
+}
+
 export type ListSessionsResponse = {
 	sessions: { Session }?,
 }

@@ -7,7 +7,7 @@ type JoinSessionInput = DTO.JoinSessionInput
 type LeaveSessionInput = DTO.LeaveSessionInput
 type CreatUpdateVoteInput = DTO.CreateUpdateVoteInput
 
-local URL_API = "https://nonlucidly-strangerlike-marylou.ngrok-free.dev/api/"
+local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
 local URL_SESSION = URL_API .. "sessions/"
 
 local SessionApi = {}
@@ -73,6 +73,7 @@ function SessionApi:CreateUpdateVote(createUpdateVoteInput: CreatUpdateVoteInput
 	end
 	return HttpService:JSONDecode(response)
 end
+--- 
 
 function SessionApi:StartSession(code: string)
 	local success, response = pcall(function()

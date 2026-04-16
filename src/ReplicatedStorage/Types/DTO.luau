@@ -22,4 +22,17 @@ export type CreateUpdateVoteInput = {
 	value: string,
 }
 
+export type CreateItemInput = {
+	title: string,
+	description: string,
+	session_id: number,
+	status: string,
+	created_by_roblox_user_id: number,
+}
+
+export type DeleteItemInput = {
+	id: string,
+	created_by_roblox_user_id: number,
+}
+
 return DTO
