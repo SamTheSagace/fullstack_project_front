@@ -16,7 +16,7 @@ local function ItemCard(props: ItemProps)
 	local isUser = user == props.userId
 	local textCost = "Cost : " .. tostring(props.cost)
 	return e("Frame", {
-		Size = UDim2.fromScale(0.2, 1),
+		Size = UDim2.fromScale(1, 1),
 		LayoutOrder = props.LayoutOrder,
 		BackgroundTransparency = 1,
 	}, {

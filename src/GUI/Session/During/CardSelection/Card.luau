@@ -104,7 +104,7 @@ local function Card(props: CardProps)
 	end, { props.selectedValue })
 
 	return e("Frame", {
-		Size = UDim2.fromScale(0.08, 0.4),
+		Size = UDim2.fromScale(0.14, 0.8),
 		BackgroundTransparency = 1,
 		LayoutOrder = props.LayoutOrder,
 	}, {

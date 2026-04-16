@@ -54,12 +54,19 @@ local function ViewItems()
 	}
 
 	for index, value in ipairs(ItemList) do
-		children[`Card_{index}`] = e(ItemCard, {
-			title = value.itemName,
-			description = value.itemDescription,
-			cost = value.cost,
-			LayoutOrder = index,
-			userId = value.userId,
+		children[`Card_{index}`] = e("Frame", {
+			Size = UDim2.fromScale(0.3, 1),
+			Position = UDim2.fromScale(0.5, 0.5),
+			BackgroundTransparency = 1,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+		}, {
+			card = e(ItemCard, {
+				title = value.itemName,
+				description = value.itemDescription,
+				cost = value.cost,
+				LayoutOrder = index,
+				userId = value.userId,
+			}),
 		})
 	end
 
