@@ -75,9 +75,9 @@ function SessionApi:CreateUpdateVote(createUpdateVoteInput: CreatUpdateVoteInput
 end
 --- 
 
-function SessionApi:StartSession(code: string)
+function SessionApi:StartSession(session_id: number)
 	local success, response = pcall(function()
-		return HttpService:PostAsync(URL_SESSION .. code .. "/start/", "", Enum.HttpContentType.ApplicationJson)
+		return HttpService:PostAsync(URL_SESSION .. session_id .. "/start/", {}, Enum.HttpContentType.ApplicationJson)
 	end)
 	if not success then
 		warn("Failed to start session:", response)

@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ItemService = require(script.Parent.ItemService)
 local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
 local Utils = require(ReplicatedStorage.Shared.Utils)
@@ -78,11 +79,13 @@ local function broadcastSessionState(code: string)
 
 	local meta = sessionMetaByCode[code]
 	local snapshot = {
+		session_id = meta and meta.sessionId or nil,
 		code = code,
 		name = (meta and meta.name) or "Session",
 		phase = getSessionPhase(code),
 		hostUserId = (meta and meta.hostUserId) or (members[1] and members[1].userId) or 0,
-		current_item_id = 1,
+		current_item_id = (meta and meta.current_item_id) or 1,
+		items = (meta and meta.items) or {},
 		members = members,
 		seatMap = RoomService.getSeatMap(code),
 		playerCount = #members,
@@ -285,8 +288,11 @@ function SessionService.handleToggleReady(player: Player)
 end
 
 function SessionService.handleStartSession(player: Player)
-	local code = getPlayerSessionCode(player)
-	if code == nil then
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
+	local sessionId = playerState and playerState.sessionId
+
+	if code == nil or sessionId == nil then
 		Utils.fireError(player, "You are not in a session", remotes)
 		return
 	end
@@ -310,9 +316,12 @@ function SessionService.handleStartSession(player: Player)
 		return
 	end
 
+	local result = SessionApi:StartSession(sessionId)
 	local meta = sessionMetaByCode[code]
 	if meta then
 		meta.phase = "playing"
+		meta.items = result and result.items or {}
+		meta.current_item_id = result and result.current_item_id or 1
 	end
 
 	broadcastSessionState(code)
