@@ -5,8 +5,8 @@ local DTO = require(ReplicatedStorage.Types.DTO)
 type CreateItemInput = DTO.CreateItemInput
 type DeleteItemInput = DTO.DeleteItemInput
 
-
-local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
+local config = require(ReplicatedStorage.Config.Config)
+local URL_API = config.API_URL
 local URL_ITEMS = URL_API .. "items/"
 
 local ItemApi = {}
@@ -37,7 +37,11 @@ end
 function ItemApi:DeleteItem(deleteItemInput: DeleteItemInput)
 	local body = HttpService:JSONEncode(deleteItemInput)
 	local success, response = pcall(function()
-		return HttpService:PostAsync(URL_ITEMS .. "delete/" .. deleteItemInput.id, body, Enum.HttpContentType.ApplicationJson)
+		return HttpService:PostAsync(
+			URL_ITEMS .. "delete/" .. deleteItemInput.id,
+			body,
+			Enum.HttpContentType.ApplicationJson
+		)
 	end)
 	if not success then
 		warn("Failed to delete item:", response)

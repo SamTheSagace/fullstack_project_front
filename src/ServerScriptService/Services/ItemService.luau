@@ -45,14 +45,14 @@ function ItemService.handleCreateItem(player: Player, payload: { title: string, 
 		return
 	end
 
-	local payload = {
+	local createPayload = {
 		created_by_roblox_user_id = player.UserId,
 		description = payload.description,
 		title = payload.title,
 		session_id = sessionId,
 		status = "pending",
-	}    
-	local result = ItemApi:CreateItem(payload)
+	}
+	local result = ItemApi:CreateItem(createPayload)
 
 	if remotes then
 		remotes.createItem:FireClient(player, result)
