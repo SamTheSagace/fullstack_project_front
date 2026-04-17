@@ -59,7 +59,7 @@ local function SessionMenu(props: props)
 			Text = "No sessions available",
 			Font = Enum.Font.Gotham,
 			TextSize = 16,
-			TextColor3 = Color3.fromRGB(161, 179, 196),
+			TextColor3 = UiValues.unactiveText,
 		})
 	end
 
