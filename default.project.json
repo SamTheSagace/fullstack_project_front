@@ -33,6 +33,9 @@
       },
       "Services": {
         "$path": "src/ServerScriptService/Services"
+      },
+      "Store": {
+        "$path": "src/ServerScriptService/Store"
       }
     },
 

@@ -15,6 +15,7 @@ type props = {
 }
 
 local function CardMenu(props: props)
+	local isVisible, setIsVisible = React.useState(props.isVisible)
 	local numbersList = { 1, 2, 3, 5, 8, 13 }
 	-- This component make an array of cards based on a list of number, to select one from it
 	local selectedValue, setSelectedValue = React.useState(nil)
@@ -47,35 +48,49 @@ local function CardMenu(props: props)
 			isFinished = Finished,
 		})
 	end
-	return e("Frame", {
-		Size = UDim2.fromScale(1, 1),
-		Position = UDim2.fromScale(0.5, 0.5),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 1,
-		Visible = props.isVisible,
-	}, {
-		MainFrame = e("Frame", {
-			Size = UDim2.fromScale(0.8, 0.4),
-			Position = UDim2.fromScale(0.5, 1),
-			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundTransparency = 1,
-		}, {
-			cardsFrame,
-		}),
-		OpenSessionMenuButton = e(CustomButton, {
-			Text = if Finished then "Change Vote" else "Finish Vote",
-			Position = UDim2.fromScale(0.5, 0.1),
-			Size = UDim2.fromScale(0.2, 0.1),
-			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
-			ButtonColor = Color3.fromRGB(0, 122, 255),
-			Interactable = isInteractable,
+	return e(React.Fragment, nil, {
+		ToggleMenuButton = e(CustomButton, {
+			Visible = props.isVisible,
+			Text = isVisible and "Close Vote" or "Open Vote",
+			Position = UDim2.fromScale(0.9, 0.1),
+			Size = UDim2.fromScale(0.15, 0.08),
+			BackgroundColor3 = Color3.fromRGB(77, 77, 77),
+			ButtonColor = Color3.fromRGB(77, 77, 77),
 			onButtonClick = function()
-				local newFinished = not Finished
-				setFinished(newFinished)
-				if newFinished then
-					handleConfirmVote()
-				end
+				setIsVisible(not isVisible)
 			end,
+		}),
+
+		Menu = isVisible and e("Frame", {
+			Size = UDim2.fromScale(1, 1),
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Visible = isVisible,
+		}, {
+			MainFrame = e("Frame", {
+				Size = UDim2.fromScale(0.8, 0.4),
+				Position = UDim2.fromScale(0.5, 1),
+				AnchorPoint = Vector2.new(0.5, 1),
+				BackgroundTransparency = 1,
+			}, {
+				cardsFrame,
+			}),
+			OpenSessionMenuButton = e(CustomButton, {
+				Text = if Finished then "Change Vote" else "Finish Vote",
+				Position = UDim2.fromScale(0.5, 0.1),
+				Size = UDim2.fromScale(0.2, 0.1),
+				BackgroundColor3 = Color3.fromRGB(1, 88, 181),
+				ButtonColor = Color3.fromRGB(0, 122, 255),
+				Interactable = isInteractable,
+				onButtonClick = function()
+					local newFinished = not Finished
+					setFinished(newFinished)
+					if newFinished then
+						handleConfirmVote()
+					end
+				end,
+			}),
 		}),
 	})
 end
