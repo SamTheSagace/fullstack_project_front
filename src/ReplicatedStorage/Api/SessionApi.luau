@@ -7,7 +7,8 @@ type JoinSessionInput = DTO.JoinSessionInput
 type LeaveSessionInput = DTO.LeaveSessionInput
 type CreatUpdateVoteInput = DTO.CreateUpdateVoteInput
 
-local URL_API = "https://nontestable-emory-punningly.ngrok-free.dev/api/"
+local config = require(ReplicatedStorage.Config.Config)
+local URL_API = config.API_URL
 local URL_SESSION = URL_API .. "sessions/"
 
 local SessionApi = {}
@@ -73,7 +74,7 @@ function SessionApi:CreateUpdateVote(createUpdateVoteInput: CreatUpdateVoteInput
 	end
 	return HttpService:JSONDecode(response)
 end
---- 
+---
 
 function SessionApi:StartSession(session_id: number)
 	local success, response = pcall(function()
