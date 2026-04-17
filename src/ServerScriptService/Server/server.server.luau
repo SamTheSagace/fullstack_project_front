@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Services = script.Parent.Parent:WaitForChild("Services")
 local ItemService = require(ServerScriptService.Services.ItemService)
+local SessionNotifier = require(ServerScriptService.Services.SessionNotifier)
 local SessionService = require(Services:WaitForChild("SessionService"))
 local VotesService = require(Services:WaitForChild("VotesService"))
 
@@ -54,6 +55,10 @@ SessionService.init({
 	leaveSession = leaveSession,
 	toggleReady = toggleReady,
 	startSession = startSession,
+})
+
+SessionNotifier.init({
+	errorEvent = errorEvent,
 	sessionState = sessionState,
 })
 
@@ -112,4 +117,3 @@ end)
 deleteItem.OnServerEvent:Connect(function(player, payload)
 	ItemService.handleDeleteItem(player, payload)
 end)
-

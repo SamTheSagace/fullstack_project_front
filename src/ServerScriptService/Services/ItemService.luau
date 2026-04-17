@@ -4,6 +4,9 @@ local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local ItemApi = require(ReplicatedStorage.Api.ItemApi)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 
+local SessionStore = require(script.Parent.Parent:WaitForChild("Store"):WaitForChild("SessionStore"))
+local SessionNotifier = require(script.Parent.SessionNotifier)
+
 local ItemService = {}
 
 local remotes = nil
@@ -34,6 +37,8 @@ function ItemService.handleListItemsBySessionId(player: Player)
 end
 
 function ItemService.handleCreateItem(player: Player, payload: { title: string, description: string })
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
 	if type(payload.title) ~= "string" or type(payload.description) ~= "string" then
 		Utils.fireError(player, "Invalid payload for creating item: " .. tostring(payload), remotes)
 		return
@@ -53,6 +58,19 @@ function ItemService.handleCreateItem(player: Player, payload: { title: string, 
 		status = "pending",
 	}
 	local result = ItemApi:CreateItem(createPayload)
+	SessionStore.update(code, function(meta)
+		meta.items = meta.items or {}
+
+		table.insert(meta.items, {
+			created_by_roblox_user_id = player.UserId,
+			title = payload.title,
+			description = payload.description,
+			position = #meta.items + 1,
+			status = "pending",
+			cost = nil,
+		})
+	end)
+	SessionNotifier.broadcastSessionState(code)
 
 	if remotes then
 		remotes.createItem:FireClient(player, result)

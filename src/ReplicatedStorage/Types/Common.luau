@@ -26,10 +26,10 @@ export type Session = {
 
 export type Item = {
 	created_by_roblox_user_id: number,
-    title: string,
-    description: string,
-    position: number,
-    status: string,
+	title: string,
+	description: string,
+	position: number,
+	status: string,
 	cost: number | nil,
 }
 
@@ -55,6 +55,7 @@ export type SessionSnapshot = {
 	playerCount: number,
 	seatedCount: number,
 	readyCount: number,
+	items: { Item },
 }
 
 return CommonTypes
