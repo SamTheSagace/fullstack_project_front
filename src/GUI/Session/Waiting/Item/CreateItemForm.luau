@@ -4,19 +4,33 @@ local StarterGui = game:GetService("StarterGui")
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local React = require(ReplicatedStorage.Packages.React)
 local UiValues = require(ReplicatedStorage.Types.UiValues)
+local Utils = require(ReplicatedStorage.Shared.Utils)
 local e = React.createElement
+local createItemEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("createItem")
 
 local function CreateItemForm()
-	local ItemName, setItemName = React.useState("")
+	local ItemTitle, setItemTitle = React.useState("")
 	local ItemDescription, setItemDescription = React.useState("")
-	local function handleReset()
+
+	local function handleResetInput()
 		setItemDescription("")
-		setItemName("")
+		setItemTitle("")
 	end
-	local function handleCreate()
-		print(ItemName, ItemDescription)
+
+	local function handleCreateItem()
+		local cleanedTitle = Utils.trim(ItemTitle)
+		if cleanedTitle == "" then
+			return
+		end
+
+		createItemEvent:FireServer({
+			title = cleanedTitle,
+			description = ItemDescription,
+		})
+		handleResetInput()
 	end
-	local canCreate = ItemName ~= "" and ItemDescription ~= ""
+
+	local canCreate = ItemTitle ~= "" and ItemDescription ~= ""
 	local unactiveColor = UiValues.unactiveColor
 	local textColor = UiValues.activeText
 	local PlaceHolderTextColor = UiValues.PlaceHolderTextColor
@@ -60,7 +74,7 @@ local function CreateItemForm()
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Size = UDim2.fromScale(1, 0.5),
 					PlaceholderText = "Placeholder",
-					Text = ItemName,
+					Text = ItemTitle,
 					ClearTextOnFocus = false,
 					Font = Enum.Font.Gotham,
 					TextSize = 16,
@@ -71,7 +85,7 @@ local function CreateItemForm()
 					BorderSizePixel = 0,
 					PlaceholderColor3 = PlaceHolderTextColor,
 					[React.Change.Text] = function(textBox)
-						setItemName(textBox.Text)
+						setItemTitle(textBox.Text)
 					end,
 					ZIndex = 3,
 				}),
@@ -131,7 +145,7 @@ local function CreateItemForm()
 				ButtonColor = canCreate and UiValues.NoButtonMain or UiValues.NoneButtonMain,
 				Interactable = canCreate,
 				onButtonClick = function()
-					handleReset()
+					handleResetInput()
 				end,
 			}),
 			Validate = e(CustomButton, {
@@ -143,7 +157,7 @@ local function CreateItemForm()
 				ButtonColor = canCreate and UiValues.YesButtonMain or UiValues.NoneButtonMain,
 				Interactable = canCreate,
 				onButtonClick = function()
-					handleCreate()
+					handleCreateItem()
 				end,
 			}),
 		}),

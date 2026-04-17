@@ -1,9 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local CreateItemForm = require(script.Parent.CreateItemForm)
 local ViewItems = require(script.Parent.ViewItem)
 local React = require(ReplicatedStorage.Packages.React)
 local UiValues = require(ReplicatedStorage.Types.UiValues)
 local e = React.createElement
+
+local listItemsSessionIdEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("listItemsSessionId")
 
 type props = {
 	isVisible: boolean,
@@ -15,6 +18,12 @@ local function ItemMenu(props: props)
 	local unactiveColor = UiValues.unactiveColor
 	local activeText = UiValues.activeText
 	local unactiveText = UiValues.unactiveText
+
+	React.useEffect(function()
+		if not isCreate then
+			listItemsSessionIdEvent:FireServer()
+		end
+	end, { isCreate })
 
 	return e("Frame", {
 		Size = UDim2.fromScale(0.8, 0.72),

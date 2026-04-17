@@ -19,6 +19,9 @@
       "Types": {
         "$path": "src/ReplicatedStorage/Types"
       },
+      "Config": {
+        "$path": "src/ReplicatedStorage/Config"
+      },
       "Packages": {
         "$path": "./Packages"
       }

@@ -1,16 +1,22 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
-
-local remotes = nil
-
-local function fireError(player: Player, message: string)
-	if remotes then
-		remotes.sessionError:FireClient(player, { message = message })
-	end
-end
+local Utils = require(ReplicatedStorage.Shared.Utils)
 
 local VoteService = {}
+
+local remotes = nil
+local isInitialized = false
+
+function VoteService.init(remoteMap)
+	remotes = remoteMap
+
+	if isInitialized then
+		return
+	end
+
+	isInitialized = true
+end
 
 function VoteService.confirmVote(
 	player: Player,
@@ -21,15 +27,15 @@ function VoteService.confirmVote(
 	}
 )
 	if type(payload.itemId) ~= "number" then
-		fireError(player, "item_id is required")
+		Utils.fireError(player, "item_id is required", remotes)
 		return
 	end
 	if type(payload.robloxUserId) ~= "number" then
-		fireError(player, "roblox_user_id is required")
+		Utils.fireError(player, "roblox_user_id is required", remotes)
 		return
 	end
 	if type(payload.value) ~= "number" then
-		fireError(player, "value is required")
+		Utils.fireError(player, "value is required", remotes)
 		return
 	end
 

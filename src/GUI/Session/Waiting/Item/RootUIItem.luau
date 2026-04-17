@@ -7,25 +7,24 @@ local UiValues = require(ReplicatedStorage.Types.UiValues)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local e = React.createElement
 
-local function RootUI()
-	local isMenuVisible, setIsMenuVisible = React.useState(true)
-
+local function RootUIItem(props)
 	return e(React.Fragment, nil, {
 		OpenSessionMenuButton = e(CustomButton, {
-			Position = UDim2.fromScale(0.5, 0.925),
+			Position = props.Position or UDim2.fromScale(0.5, 0.925),
+			AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5),
 			Size = UDim2.fromScale(0.2, 0.1),
-			Text = if isMenuVisible then "Close Item Menu" else "Open Item Menu",
-			BackgroundColor3 = not isMenuVisible and UiValues.YesButtonSec or UiValues.NoButtonSec,
-			ButtonColor = not isMenuVisible and UiValues.YesButtonMain or UiValues.NoButtonMain,
+			Text = if props.isMenuVisible then "Close Item Menu" else "Open Item Menu",
+			BackgroundColor3 = not props.isMenuVisible and UiValues.YesButtonSec or UiValues.NoButtonSec,
+			ButtonColor = not props.isMenuVisible and UiValues.YesButtonMain or UiValues.NoButtonMain,
 			onButtonClick = function()
-				setIsMenuVisible(not isMenuVisible)
+				props.setIsMenuVisible(not props.isMenuVisible)
 			end,
 		}),
 
 		ItemMenu = e(ItemMenu, {
-			isVisible = isMenuVisible,
+			isVisible = props.isMenuVisible,
 		}),
 	})
 end
 
-return RootUI
+return RootUIItem
