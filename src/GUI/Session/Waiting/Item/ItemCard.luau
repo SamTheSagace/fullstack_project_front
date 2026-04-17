@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 local e = React.createElement
 
 type ItemProps = {
@@ -24,7 +25,7 @@ local function ItemCard(props: ItemProps)
 			Size = UDim2.fromScale(1, 0.95),
 			AnchorPoint = Vector2.new(0.5, 1),
 			Position = UDim2.fromScale(0.5, 1),
-			BackgroundColor3 = Color3.fromRGB(224, 209, 160),
+			BackgroundColor3 = UiValues.MainColor,
 		}, {
 			{
 				Corner = e("UICorner", {
@@ -32,7 +33,7 @@ local function ItemCard(props: ItemProps)
 				}),
 				Border = e("UIStroke", {
 					Thickness = 2,
-					Color = Color3.fromRGB(20, 78, 70),
+					Color = UiValues.MainGreenColor,
 					Enabled = true,
 					ApplyStrokeMode = "Border",
 				}),
@@ -56,7 +57,7 @@ local function ItemCard(props: ItemProps)
 							Size = UDim2.fromScale(1, 0.8),
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							Position = UDim2.fromScale(0.5, 0.5),
-							BackgroundColor3 = Color3.fromRGB(121, 94, 36),
+							BackgroundColor3 = UiValues.activeText,
 						}, {
 							Corner = e("UICorner", {
 								CornerRadius = UDim.new(0, 05),
@@ -101,7 +102,7 @@ local function ItemCard(props: ItemProps)
 							Size = UDim2.fromScale(1, 0.01),
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							Position = UDim2.fromScale(0.5, 0.78),
-							BackgroundColor3 = Color3.fromRGB(121, 94, 36),
+							BackgroundColor3 = UiValues.activeText,
 							BorderSizePixel = 0,
 						}),
 						CostFrame = e("Frame", {

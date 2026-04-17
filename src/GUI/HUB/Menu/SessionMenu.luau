@@ -4,6 +4,7 @@ local SessionEntry = require(script.Parent.SessionEntry)
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 local Utils = require(ReplicatedStorage.Shared.Utils)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 
 local e = React.createElement
 local listSessionsEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("listSessions")
@@ -76,14 +77,14 @@ local function SessionMenu(props: props)
 		Size = UDim2.fromScale(0.8, 0.72),
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = Color3.fromRGB(8, 18, 31),
+		BackgroundColor3 = UiValues.unactiveColor,
 		Visible = props.isVisible,
 	}, {
 		Corner = e("UICorner", {
 			CornerRadius = UDim.new(0, 12),
 		}),
 		Border = e("UIStroke", {
-			Color = Color3.fromRGB(44, 73, 103),
+			Color = UiValues.MainGreenColor,
 		}),
 		Title = e("TextLabel", {
 			Text = "Session Menu",
@@ -100,13 +101,13 @@ local function SessionMenu(props: props)
 		}, {
 			LeftPanel = e("Frame", {
 				Size = UDim2.fromScale(0.36, 1),
-				BackgroundColor3 = Color3.fromRGB(13, 29, 48),
+				BackgroundColor3 = UiValues.activeColor,
 			}, {
 				Corner = e("UICorner", {
 					CornerRadius = UDim.new(0, 12),
 				}),
 				Stroke = e("UIStroke", {
-					Color = Color3.fromRGB(44, 73, 103),
+					Color = UiValues.MainGreenColor,
 					Thickness = 1.5,
 				}),
 				Header = e("TextLabel", {
@@ -116,7 +117,7 @@ local function SessionMenu(props: props)
 					BackgroundTransparency = 1,
 					Font = Enum.Font.GothamBold,
 					TextSize = 22,
-					TextColor3 = Color3.fromRGB(230, 237, 242),
+					TextColor3 = UiValues.activeText,
 					TextXAlignment = Enum.TextXAlignment.Left,
 				}),
 				Description = e("TextLabel", {
@@ -127,7 +128,7 @@ local function SessionMenu(props: props)
 					Font = Enum.Font.Gotham,
 					TextWrapped = true,
 					TextSize = 14,
-					TextColor3 = Color3.fromRGB(167, 184, 202),
+					TextColor3 = UiValues.activeText,
 					TextXAlignment = Enum.TextXAlignment.Left,
 					TextYAlignment = Enum.TextYAlignment.Top,
 				}),
@@ -140,9 +141,10 @@ local function SessionMenu(props: props)
 					Font = Enum.Font.Gotham,
 					TextSize = 16,
 					TextXAlignment = Enum.TextXAlignment.Left,
-					TextColor3 = Color3.fromRGB(237, 243, 247),
-					BackgroundColor3 = Color3.fromRGB(20, 39, 62),
-					PlaceholderColor3 = Color3.fromRGB(122, 147, 175),
+					TextColor3 = Color3.fromRGB(255, 255, 255),
+					BackgroundColor3 = UiValues.unactiveColor,
+					PlaceholderColor3 = UiValues.PlaceHolderTextColor,
+					BackgroundTransparency = 0.5,
 					[React.Change.Text] = function(textBox)
 						setSessionName(textBox.Text)
 					end,
@@ -155,10 +157,6 @@ local function SessionMenu(props: props)
 					Corner = e("UICorner", {
 						CornerRadius = UDim.new(0, 8),
 					}),
-					Stroke = e("UIStroke", {
-						Color = Color3.fromRGB(54, 86, 117),
-						Thickness = 1,
-					}),
 					Padding = e("UIPadding", {
 						PaddingLeft = UDim.new(0, 10),
 						PaddingRight = UDim.new(0, 10),
@@ -168,7 +166,7 @@ local function SessionMenu(props: props)
 					Text = "Create Session",
 					Position = UDim2.fromOffset(14, 150),
 					Size = UDim2.new(1, -28, 0, 42),
-					BackgroundColor3 = Color3.fromRGB(20, 114, 255),
+					BackgroundColor3 = UiValues.YesButtonMain,
 					TextColor3 = Color3.fromRGB(255, 255, 255),
 					Font = Enum.Font.GothamBold,
 					TextSize = 16,
@@ -183,7 +181,7 @@ local function SessionMenu(props: props)
 			RightPanel = e("Frame", {
 				Position = UDim2.fromScale(0.39, 0),
 				Size = UDim2.fromScale(0.61, 1),
-				BackgroundColor3 = Color3.fromRGB(13, 29, 48),
+				BackgroundColor3 = UiValues.activeColor,
 			}, {
 				Corner = e("UICorner", {
 					CornerRadius = UDim.new(0, 12),
@@ -199,13 +197,8 @@ local function SessionMenu(props: props)
 					BackgroundTransparency = 1,
 					Font = Enum.Font.GothamBold,
 					TextSize = 22,
-					TextColor3 = Color3.fromRGB(230, 237, 242),
+					TextColor3 = UiValues.activeText,
 					TextXAlignment = Enum.TextXAlignment.Left,
-				}, {
-					BorderBottom = e("UIStroke", {
-						Color = Color3.fromRGB(44, 73, 103),
-						Thickness = 1,
-					}),
 				}),
 				SessionList = e("ScrollingFrame", {
 					Position = UDim2.fromOffset(14, 48),

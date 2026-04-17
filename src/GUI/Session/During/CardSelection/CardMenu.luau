@@ -21,6 +21,8 @@ local function CardMenu(props: props)
 	-- This component make an array of cards based on a list of number, to select one from it
 	local selectedValue, setSelectedValue = React.useState(nil)
 	local Finished, setFinished = React.useState(false)
+	local ItemShow, setItemShow = React.useState(false)
+	local VoteShow, setVoteShow = React.useState(false)
 	local isInteractable = selectedValue ~= nil
 
 	local function handleConfirmVote()
@@ -56,14 +58,8 @@ local function CardMenu(props: props)
 		})
 	end
 
-	return e("Frame", {
-		Size = UDim2.fromScale(1, 1),
-		Position = UDim2.fromScale(0.5, 0.5),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 1,
-		Visible = props.isVisible,
-	}, {
-		ItemFrame = e("Frame", {
+	local ItemFrame = if ItemShow
+		then e("Frame", {
 			Size = UDim2.fromScale(1, 0.5),
 			Position = UDim2.fromScale(0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0),
@@ -82,7 +78,77 @@ local function CardMenu(props: props)
 					userId = ItemList.userId,
 				}),
 			}),
-		}),
+		})
+		else nil
+
+	local ButtonsFrame = if VoteShow
+		then e("Frame", {
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+		}, {
+			ItemButton = e(CustomButton, {
+				Text = if not ItemShow then "Show Item" else "Hide Item",
+				Size = UDim2.fromScale(0.3, 1),
+				Position = UDim2.fromScale(0, 0.5),
+				AnchorPoint = Vector2.new(0, 0.5),
+				BackgroundColor3 = Color3.fromRGB(1, 88, 181),
+				ButtonColor = Color3.fromRGB(0, 122, 255),
+				onButtonClick = function()
+					local newFinished = not ItemShow
+					setItemShow(newFinished)
+				end,
+			}),
+
+			ModalButton = e(CustomButton, {
+				Text = "Close",
+				BackgroundColor3 = Color3.fromRGB(1, 88, 181),
+				Size = UDim2.fromScale(0.3, 1),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				ButtonColor = Color3.fromRGB(0, 122, 255),
+				onButtonClick = function()
+					setVoteShow(false)
+				end,
+			}),
+			VoteButton = e(CustomButton, {
+				Text = if Finished then "Change Vote" else "Finish Vote",
+				Size = UDim2.fromScale(0.3, 1),
+				Position = UDim2.fromScale(1, 0.5),
+				AnchorPoint = Vector2.new(1, 0.5),
+				BackgroundColor3 = isInteractable and Color3.fromRGB(1, 88, 181) or Color3.fromRGB(1, 88, 181),
+				ButtonColor = Color3.fromRGB(0, 122, 255),
+				Interactable = isInteractable,
+				onButtonClick = function()
+					local newFinished = not Finished
+					setFinished(newFinished)
+					if newFinished then
+						handleConfirmVote()
+					end
+				end,
+			}),
+		})
+		else e(CustomButton, {
+			Text = "Open Vote",
+			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
+			Size = UDim2.fromScale(0.3, 1),
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			ButtonColor = Color3.fromRGB(0, 122, 255),
+			onButtonClick = function()
+				setVoteShow(true)
+			end,
+		})
+
+	return e("Frame", {
+		Size = UDim2.fromScale(1, 1),
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		BackgroundTransparency = 1,
+		Visible = props.isVisible,
+	}, {
+		ItemFrame = ItemFrame,
 		VoteFrame = e("Frame", {
 			Size = UDim2.fromScale(0.8, 0.4),
 			Position = UDim2.fromScale(0.5, 0.85),
@@ -90,24 +156,14 @@ local function CardMenu(props: props)
 			BackgroundTransparency = 1,
 			ZIndex = 3,
 		}, {
-			cardsFrame,
+			if VoteShow then cardsFrame else nil,
 		}),
-		OpenSessionMenuButton = e(CustomButton, {
-			Text = if Finished then "Change Vote" else "Finish Vote",
+		ButtonsFrame = e("Frame", {
 			Position = UDim2.fromScale(0.5, 0.96),
 			AnchorPoint = Vector2.new(0.5, 1),
-			Size = UDim2.fromScale(0.2, 0.1),
-			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
-			ButtonColor = Color3.fromRGB(0, 122, 255),
-			Interactable = isInteractable,
-			onButtonClick = function()
-				local newFinished = not Finished
-				setFinished(newFinished)
-				if newFinished then
-					handleConfirmVote()
-				end
-			end,
-		}),
+			Size = UDim2.fromScale(0.7, 0.1),
+			BackgroundTransparency = 1,
+		}, { ButtonsFrame }),
 	})
 end
 

@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 
 local e = React.createElement
 
@@ -37,7 +38,7 @@ local function SessionEntry(props: props)
 		local plrAvatar, isReady = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
 		playersChildren[`Avatar_{playerIndex}`] = e("ImageLabel", {
 			Size = UDim2.fromOffset(38, 38),
-			BackgroundColor3 = Color3.fromRGB(39, 55, 75),
+			BackgroundColor3 = UiValues.activeColor,
 			Image = plrAvatar,
 			ScaleType = Enum.ScaleType.Crop,
 		}, {
@@ -45,7 +46,7 @@ local function SessionEntry(props: props)
 				CornerRadius = UDim.new(1, 0),
 			}),
 			Stroke = e("UIStroke", {
-				Color = Color3.fromRGB(79, 102, 128),
+				Color = UiValues.MainGreenColor,
 				Thickness = 1,
 			}),
 		})
@@ -54,11 +55,11 @@ local function SessionEntry(props: props)
 	return e("Frame", {
 		LayoutOrder = props.index,
 		Size = UDim2.fromScale(1, 0.25),
-		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		BackgroundColor3 = UiValues.unactiveColor,
 		BackgroundTransparency = 1,
 	}, {
 		Stroke = e("UIStroke", {
-			Color = Color3.fromRGB(42, 62, 84),
+			Color = UiValues.MainGreenColor,
 			Thickness = 1,
 		}),
 		Padding = e("UIPadding", {

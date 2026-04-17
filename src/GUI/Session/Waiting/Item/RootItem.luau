@@ -3,6 +3,7 @@ local StarterGui = game:GetService("StarterGui")
 
 local ItemMenu = require(script.Parent.ItemMenu)
 local React = require(ReplicatedStorage.Packages.React)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local e = React.createElement
 
@@ -11,11 +12,11 @@ local function RootUI()
 
 	return e(React.Fragment, nil, {
 		OpenSessionMenuButton = e(CustomButton, {
-			Text = "Item Menu",
 			Position = UDim2.fromScale(0.5, 0.925),
 			Size = UDim2.fromScale(0.2, 0.1),
-			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
-			ButtonColor = Color3.fromRGB(0, 122, 255),
+			Text = if isMenuVisible then "Close Item Menu" else "Open Item Menu",
+			BackgroundColor3 = not isMenuVisible and UiValues.YesButtonSec or UiValues.NoButtonSec,
+			ButtonColor = not isMenuVisible and UiValues.YesButtonMain or UiValues.NoButtonMain,
 			onButtonClick = function()
 				setIsMenuVisible(not isMenuVisible)
 			end,

@@ -146,7 +146,7 @@ local function Card(props: CardProps)
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
 				TextSize = 20,
-				TextColor3 = Color3.fromRGB(20, 78, 70),
+				TextColor3 = Color3.fromRGB(0, 255, 221),
 			}),
 		}),
 	})
