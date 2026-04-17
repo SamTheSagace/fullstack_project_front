@@ -19,7 +19,6 @@ local function getSessionPhase(code: string): string
 end
 
 function SessionNotifier.init(remoteMap)
-	print("hello bro")
 	remotes = remoteMap
 
 	if isInitialized then

@@ -58,7 +58,6 @@ function SessionApi:LeaveSession(code: string, data: LeaveSessionInput)
 		warn("Failed to leave session:", response)
 		return nil
 	end
-	print(response)
 	return HttpService:JSONDecode(response)
 end
 
