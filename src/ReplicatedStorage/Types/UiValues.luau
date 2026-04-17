@@ -1,0 +1,16 @@
+local UiValues = {}
+UiValues.activeColor = Color3.fromRGB(212, 210, 199)
+UiValues.unactiveColor = Color3.fromRGB(85, 79, 73)
+UiValues.activeText = Color3.fromRGB(80, 45, 16)
+UiValues.unactiveText = Color3.fromRGB(255, 255, 255)
+-- UiValues.unactiveColor = Color3.fromRGB(79, 104, 110)
+UiValues.PlaceHolderTextColor = Color3.fromRGB(92, 71, 55)
+UiValues.MainColor = Color3.fromRGB(224, 209, 160)
+UiValues.MainGreenColor = Color3.fromRGB(20, 78, 70)
+UiValues.NoneButtonSec = Color3.fromRGB(61, 61, 61)
+UiValues.NoneButtonMain = Color3.fromRGB(107, 107, 107)
+UiValues.YesButtonSec = Color3.fromRGB(18, 61, 90)
+UiValues.YesButtonMain = Color3.fromRGB(50, 128, 184)
+UiValues.NoButtonSec = Color3.fromRGB(109, 61, 61)
+UiValues.NoButtonMain = Color3.fromRGB(199, 139, 139)
+return UiValues
