@@ -97,6 +97,7 @@ local function SessionMenu(props: props)
 			Position = UDim2.fromOffset(18, 56),
 			Size = UDim2.new(1, -36, 1, -74),
 			BackgroundTransparency = 1,
+			ClipsDescendants = true,
 		}, {
 			LeftPanel = e("Frame", {
 				Size = UDim2.fromScale(0.36, 1),
