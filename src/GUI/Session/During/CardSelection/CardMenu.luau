@@ -16,6 +16,7 @@ type props = {
 }
 
 local function CardMenu(props: props)
+	local isVisible, setIsVisible = React.useState(props.isVisible)
 	type Item = { itemName: string, itemDescription: string, cost: number | nil, userId: number }
 	local numbersList = { 1, 2, 3, 5, 8, 13 }
 	-- This component make an array of cards based on a list of number, to select one from it
@@ -141,30 +142,69 @@ local function CardMenu(props: props)
 			end,
 		})
 
-	return e("Frame", {
-		Size = UDim2.fromScale(1, 1),
-		Position = UDim2.fromScale(0.5, 0.5),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 1,
-		Visible = props.isVisible,
-	}, {
-		ItemFrame = ItemFrame,
-		VoteFrame = e("Frame", {
-			Size = UDim2.fromScale(0.8, 0.4),
-			Position = UDim2.fromScale(0.5, 0.85),
-			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundTransparency = 1,
-			ZIndex = 3,
-		}, {
-			if VoteShow then cardsFrame else nil,
+	return e(React.Fragment, nil, {
+		ToggleMenuButton = e(CustomButton, {
+			Visible = props.isVisible,
+			Text = isVisible and "Close Vote" or "Open Vote",
+			Position = UDim2.fromScale(0.9, 0.1),
+			Size = UDim2.fromScale(0.15, 0.08),
+			BackgroundColor3 = Color3.fromRGB(77, 77, 77),
+			ButtonColor = Color3.fromRGB(77, 77, 77),
+			onButtonClick = function()
+				setIsVisible(not isVisible)
+			end,
 		}),
-		ButtonsFrame = e("Frame", {
-			Position = UDim2.fromScale(0.5, 0.96),
-			AnchorPoint = Vector2.new(0.5, 1),
-			Size = UDim2.fromScale(0.7, 0.1),
+		Menu = isVisible and e("Frame", {
+			Size = UDim2.fromScale(1, 1),
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-		}, { ButtonsFrame }),
+			Visible = props.isVisible,
+		}, {
+			ItemFrame = ItemFrame,
+			VoteFrame = e("Frame", {
+				Size = UDim2.fromScale(0.8, 0.4),
+				Position = UDim2.fromScale(0.5, 0.85),
+				AnchorPoint = Vector2.new(0.5, 1),
+				BackgroundTransparency = 1,
+				ZIndex = 3,
+			}, {
+				if VoteShow then cardsFrame else nil,
+			}),
+			ButtonsFrame = e("Frame", {
+				Position = UDim2.fromScale(0.5, 0.96),
+				AnchorPoint = Vector2.new(0.5, 1),
+				Size = UDim2.fromScale(0.7, 0.1),
+				BackgroundTransparency = 1,
+			}, { ButtonsFrame }),
+		}),
 	})
 end
 
 return CardMenu
+
+-- {
+-- 			MainFrame = e("Frame", {
+-- 				Size = UDim2.fromScale(0.8, 0.4),
+-- 				Position = UDim2.fromScale(0.5, 1),
+-- 				AnchorPoint = Vector2.new(0.5, 1),
+-- 				BackgroundTransparency = 1,
+-- 			}, {
+-- 				cardsFrame,
+-- 			}),
+-- 			OpenSessionMenuButton = e(CustomButton, {
+-- 				Text = if Finished then "Change Vote" else "Finish Vote",
+-- 				Position = UDim2.fromScale(0.5, 0.1),
+-- 				Size = UDim2.fromScale(0.2, 0.1),
+-- 				BackgroundColor3 = Color3.fromRGB(1, 88, 181),
+-- 				ButtonColor = Color3.fromRGB(0, 122, 255),
+-- 				Interactable = isInteractable,
+-- 				onButtonClick = function()
+-- 					local newFinished = not Finished
+-- 					setFinished(newFinished)
+-- 					if newFinished then
+-- 						handleConfirmVote()
+-- 					end
+-- 				end,
+-- 			}),
+-- 		}),

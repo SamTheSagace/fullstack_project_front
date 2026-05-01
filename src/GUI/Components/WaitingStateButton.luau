@@ -14,7 +14,7 @@ type Props = {
 	actionEnabled: boolean?,
 	actionText: string?,
 	helperText: string?,
-    isMenuVisible: boolean?,
+	isMenuVisible: boolean?,
 	onAction: (() -> ())?,
 }
 
@@ -24,14 +24,16 @@ local function WaitingStateButton(props: Props)
 	local actionEnabled = props.actionEnabled ~= false
 	local backgroundColor = if isOwner
 		then Color3.fromRGB(18, 110, 62)
-		else if props.isCurrentPlayerReady == true then Color3.fromRGB(184, 126, 21) else Color3.fromRGB(17, 93, 172)
+		else if props.isCurrentPlayerReady == true
+			then Color3.fromRGB(184, 126, 21)
+			else Color3.fromRGB(17, 93, 172)
 
 	return e("Frame", {
 		Size = UDim2.fromScale(0.3, 0.22),
 		Position = UDim2.fromScale(0.5, 0.98),
 		AnchorPoint = Vector2.new(0.5, 1),
 		BackgroundColor3 = Color3.fromRGB(8, 18, 31),
-        Visible = not props.isMenuVisible
+		Visible = not props.isMenuVisible,
 	}, {
 		UICorner = e("UICorner", {
 			CornerRadius = UDim.new(0.12, 0),

@@ -1,7 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
-local ServerScriptService = game:GetService("ServerScriptService")
 
 local React = require(ReplicatedStorage.Packages.React)
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
@@ -67,6 +66,7 @@ local function SessionWaitingUI(props: Props)
 	local isReady = localMember ~= nil and localMember.isReady == true
 	local isSessionWaiting = currentSession.phase == "waiting"
 	local ownerCanStart = isOwner and canOwnerStart(currentSession)
+	local hasItems = (currentSession.items and #currentSession.items > 0)
 
 	local helperText = ""
 	if not isSessionWaiting then
@@ -84,7 +84,7 @@ local function SessionWaitingUI(props: Props)
 	end
 
 	local canAct = isSessionWaiting and isSeated
-	local canPressAction = canAct and (not isOwner or ownerCanStart)
+	local canPressAction = canAct and (not isOwner or ownerCanStart) and hasItems
 	local actionText = if isOwner then "Start Session" else if isReady then "Unready" else "Ready"
 	local isMenuVisible, setIsMenuVisible = React.useState(false)
 
