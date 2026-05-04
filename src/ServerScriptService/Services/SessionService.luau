@@ -2,10 +2,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
+local ItemApi = require(ReplicatedStorage.Api.ItemApi)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 
 local RoomService = require(script.Parent:WaitForChild("RoomService"))
+local ItemService = require(script.Parent:WaitForChild("ItemService"))
 
 local CommonTypes = require(ReplicatedStorage.Types.Common)
 type Item = CommonTypes.Item
@@ -265,13 +267,64 @@ function SessionService.handleStartSession(player: Player)
 	end
 
 	local result = SessionApi:StartSession(sessionId)
+	local session = SessionApi:GetSessionByCode(code)
+	local items: { Item } = result and result.items or {}
+	local listItems = ItemService.handleListItemsBySessionId(player)
+	if listItems then
+		items = listItems
+	end
+	local currentItem: Item
+	for _, item in ipairs(items) do
+		if item.position == 1 then
+			currentItem = item
+			break
+		end
+	end
+
 	SessionStore.update(code, function(meta)
 		meta.phase = "playing"
-		meta.items = result and result.items or {}
-		meta.current_item_id = result and result.current_item_id or 1
+		meta.items = items
+		meta.currentItem = currentItem
+		meta.members = session.members or meta.members
 	end)
 
 	SessionNotifier.broadcastSessionState(code)
+end
+
+function SessionService.handleNextItem(player: Player)
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
+	local sessionId = playerState and playerState.sessionId
+
+	if code == nil or sessionId == nil then
+		Utils.fireError(player, "You are not in a session", remotes)
+		return
+	end
+
+	local getMeta = SessionStore.get(code)
+	local currentItemResponse: Item = ItemApi:GetItemBySessionIdAndPosition(sessionId, getMeta.currentItem.position)
+	local membersLength: number = getMeta.members and #getMeta.members
+	local votesLength: number = currentItemResponse and currentItemResponse.votes and #currentItemResponse.votes
+	if votesLength ~= membersLength then
+		Utils.fireError(player, "Not all players have voted on the current item", remotes)
+		return
+	end
+
+	SessionStore.update(code, function(meta)
+		if meta.phase ~= "playing" then
+			Utils.fireError(player, "Session is not in playing phase", remotes)
+			return
+		end
+
+		if meta.currentItem == nil then
+			Utils.fireError(player, "Current item is missing", remotes)
+			return
+		end
+
+		meta.currentItem = meta.items[meta.currentItem.position + 1]
+	end)
+
+	remotes.nextItem:FireClient(player, SessionStore.get(code))
 end
 
 function SessionService.handleJoinSession(player: Player, payload)

@@ -22,6 +22,17 @@ function ItemApi:GetItemsBySessionId(session_id: number)
 	return HttpService:JSONDecode(response)
 end
 
+function ItemApi:GetItemBySessionIdAndPosition(session_id: number, position: number)
+	local success, response = pcall(function()
+		return HttpService:GetAsync(`{URL_ITEMS}session/{session_id}/?position={position}`)
+	end)
+	if not success then
+		warn("Failed to get sessions:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+
 function ItemApi:CreateItem(createItemInput: CreateItemInput)
 	local jsonData = HttpService:JSONEncode(createItemInput)
 	local success, response = pcall(function()

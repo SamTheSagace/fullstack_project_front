@@ -34,6 +34,8 @@ function ItemService.handleListItemsBySessionId(player: Player)
 	if remotes then
 		remotes.listItemsSessionId:FireClient(player, result)
 	end
+
+	return result
 end
 
 function ItemService.handleCreateItem(player: Player, payload: { title: string, description: string })
