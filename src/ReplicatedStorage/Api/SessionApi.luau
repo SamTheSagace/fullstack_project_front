@@ -25,6 +25,17 @@ function SessionApi:GetSessions()
 	return HttpService:JSONDecode(response)
 end
 
+function SessionApi:GetSessionByCode(code: string)
+	local success, response = pcall(function()
+		return HttpService:GetAsync(URL_SESSION .. code .. "/")
+	end)
+	if not success then
+		warn("Failed to get session by code:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+
 function SessionApi:CreateSession(createSessionInput: CreateSessionInput)
 	local jsonData = HttpService:JSONEncode(createSessionInput)
 	local success, response = pcall(function()
@@ -83,6 +94,8 @@ function SessionApi:StartSession(session_id: number)
 		warn("Failed to start session:", response)
 		return nil
 	end
+
+	print("start session :", response)
 	return HttpService:JSONDecode(response)
 end
 

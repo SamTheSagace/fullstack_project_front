@@ -25,12 +25,20 @@ export type Session = {
 }
 
 export type Item = {
+	id: number,
 	created_by_roblox_user_id: number,
 	title: string,
 	description: string,
 	position: number,
 	status: string,
 	cost: number | nil,
+	votes: { Vote },
+}
+
+export type Vote = {
+	item_id: number,
+	roblox_user_id: number,
+	vote: string,
 }
 
 export type ListSessionsResponse = {
@@ -43,6 +51,7 @@ export type SessionSnapshotMember = {
 	participate: boolean,
 	isReady: boolean,
 	isSeated: boolean,
+	hasVoted: boolean,
 }
 
 export type SessionSnapshot = {
@@ -56,6 +65,7 @@ export type SessionSnapshot = {
 	seatedCount: number,
 	readyCount: number,
 	items: { Item },
+	currentItem: Item,
 }
 
 return CommonTypes

@@ -7,17 +7,18 @@ local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local ItemCard = require(StarterGui.GUI.Session.Waiting.Item.ItemCard)
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
+local CommonTypes = require(ReplicatedStorage.Types.Common)
+type Item = CommonTypes.Item
 
 local confirmVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("confirmVote")
 
 type props = {
 	isVisible: boolean,
-	currentItemId: number,
+	currentItem: Item,
+	resetCardMenu: (resetFn: () -> ()) -> (),
 }
 
 local function CardMenu(props: props)
-	local isVisible, setIsVisible = React.useState(props.isVisible)
-	type Item = { itemName: string, itemDescription: string, cost: number | nil, userId: number }
 	local numbersList = { 1, 2, 3, 5, 8, 13 }
 	-- This component make an array of cards based on a list of number, to select one from it
 	local selectedValue, setSelectedValue = React.useState(nil)
@@ -26,19 +27,23 @@ local function CardMenu(props: props)
 	local VoteShow, setVoteShow = React.useState(false)
 	local isInteractable = selectedValue ~= nil
 
+	React.useEffect(function()
+		if props.resetCardMenu then
+			props.resetCardMenu(function()
+				setSelectedValue(nil)
+				setFinished(false)
+				setItemShow(false)
+			end)
+		end
+	end)
+
 	local function handleConfirmVote()
 		confirmVoteEvent:FireServer({
-			itemId = props.currentItemId,
+			itemId = props.currentItem.id,
 			robloxUserId = Players.LocalPlayer.UserId,
 			value = selectedValue,
 		})
 	end
-	local ItemList: Item = {
-		itemName = "Vote",
-		itemDescription = "As a user i want : click on a buttton to be able to : vote on the current Item",
-		cost = 3,
-		userId = 3,
-	}
 
 	local cardsFrame = {
 		Layout = e("UIListLayout", {
@@ -73,10 +78,10 @@ local function CardMenu(props: props)
 				AnchorPoint = Vector2.new(0.5, 0.5),
 			}, {
 				CurrentItem = e(ItemCard, {
-					title = ItemList.itemName,
-					description = ItemList.itemDescription,
-					cost = ItemList.cost,
-					userId = ItemList.userId,
+					title = props.currentItem.title,
+					description = props.currentItem.description,
+					cost = props.currentItem.cost,
+					userId = props.currentItem.created_by_roblox_user_id,
 				}),
 			}),
 		})
@@ -114,7 +119,7 @@ local function CardMenu(props: props)
 				end,
 			}),
 			VoteButton = e(CustomButton, {
-				Text = if Finished then "Change Vote" else "Finish Vote",
+				Text = if Finished then "Change Vote" else "Confirm Vote",
 				Size = UDim2.fromScale(0.3, 1),
 				Position = UDim2.fromScale(1, 0.5),
 				AnchorPoint = Vector2.new(1, 0.5),
@@ -143,18 +148,7 @@ local function CardMenu(props: props)
 		})
 
 	return e(React.Fragment, nil, {
-		ToggleMenuButton = e(CustomButton, {
-			Visible = props.isVisible,
-			Text = isVisible and "Close Vote" or "Open Vote",
-			Position = UDim2.fromScale(0.9, 0.1),
-			Size = UDim2.fromScale(0.15, 0.08),
-			BackgroundColor3 = Color3.fromRGB(77, 77, 77),
-			ButtonColor = Color3.fromRGB(77, 77, 77),
-			onButtonClick = function()
-				setIsVisible(not isVisible)
-			end,
-		}),
-		Menu = isVisible and e("Frame", {
+		Menu = e("Frame", {
 			Size = UDim2.fromScale(1, 1),
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -182,29 +176,3 @@ local function CardMenu(props: props)
 end
 
 return CardMenu
-
--- {
--- 			MainFrame = e("Frame", {
--- 				Size = UDim2.fromScale(0.8, 0.4),
--- 				Position = UDim2.fromScale(0.5, 1),
--- 				AnchorPoint = Vector2.new(0.5, 1),
--- 				BackgroundTransparency = 1,
--- 			}, {
--- 				cardsFrame,
--- 			}),
--- 			OpenSessionMenuButton = e(CustomButton, {
--- 				Text = if Finished then "Change Vote" else "Finish Vote",
--- 				Position = UDim2.fromScale(0.5, 0.1),
--- 				Size = UDim2.fromScale(0.2, 0.1),
--- 				BackgroundColor3 = Color3.fromRGB(1, 88, 181),
--- 				ButtonColor = Color3.fromRGB(0, 122, 255),
--- 				Interactable = isInteractable,
--- 				onButtonClick = function()
--- 					local newFinished = not Finished
--- 					setFinished(newFinished)
--- 					if newFinished then
--- 						handleConfirmVote()
--- 					end
--- 				end,
--- 			}),
--- 		}),
