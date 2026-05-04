@@ -39,6 +39,8 @@ local toggleReady = ensureRemoteEvent("toggleReady")
 local startSession = ensureRemoteEvent("startSession")
 local sessionState = ensureRemoteEvent("sessionState")
 local nextItem = ensureRemoteEvent("nextItem")
+local endSession = ensureRemoteEvent("endSession")
+local canFinishVote = ensureRemoteEvent("canFinishVote")
 
 -- Votes events
 local confirmVote = ensureRemoteEvent("confirmVote")
@@ -57,6 +59,8 @@ SessionService.init({
 	toggleReady = toggleReady,
 	startSession = startSession,
 	nextItem = nextItem,
+	endSession = endSession,
+	canFinishVote = canFinishVote,
 })
 
 SessionNotifier.init({
@@ -102,6 +106,14 @@ end)
 
 nextItem.OnServerEvent:Connect(function(player)
 	SessionService.handleNextItem(player)
+end)
+
+endSession.OnServerEvent:Connect(function(player)
+	SessionService.handleEndSession(player)
+end)
+
+canFinishVote.OnServerEvent:Connect(function(player)
+	SessionService.canFinishVote(player)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
