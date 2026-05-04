@@ -39,12 +39,19 @@ local function ViewItems()
 	local hasItems = false
 	for index, value in ipairs(ItemList) do
 		hasItems = true
-		children[`Card_{index}`] = e(ItemCard, {
-			title = value.title,
-			description = value.description,
-			cost = value.cost,
-			LayoutOrder = value.position,
-			userId = value.created_by_roblox_user_id,
+		children[`Card_{index}`] = e("Frame", {
+			Size = UDim2.fromScale(0.2, 0.9),
+			Position = UDim2.fromScale(0.5, 0.5),
+			BackgroundTransparency = 1,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+		}, {
+			card = e(ItemCard, {
+				title = value.title,
+				description = value.description,
+				cost = value.cost,
+				LayoutOrder = value.position,
+				userId = value.created_by_roblox_user_id,
+			}),
 		})
 	end
 

@@ -3,10 +3,10 @@ local StarterGui = game:GetService("StarterGui")
 
 local CustomButton = require(StarterGui.GUI.Components.CustomButton)
 local React = require(ReplicatedStorage.Packages.React)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 local e = React.createElement
 local createItemEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("createItem")
-
 
 local function CreateItemForm()
 	local ItemTitle, setItemTitle = React.useState("")
@@ -31,10 +31,9 @@ local function CreateItemForm()
 	end
 
 	local canCreate = ItemTitle ~= "" and ItemDescription ~= ""
-	local unactiveColor = Color3.fromRGB(79, 104, 110)
-	local textColor = Color3.fromRGB(80, 45, 16)
-	local PlaceHolderTextColor = Color3.fromRGB(92, 71, 55)
-
+	local unactiveColor = UiValues.unactiveColor
+	local textColor = UiValues.activeText
+	local PlaceHolderTextColor = UiValues.PlaceHolderTextColor
 
 	return e("Frame", {
 		Size = UDim2.fromScale(1, 1),
@@ -142,8 +141,8 @@ local function CreateItemForm()
 				Position = UDim2.fromScale(0.25, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Size = UDim2.fromScale(0.25, 0.5),
-				BackgroundColor3 = canCreate and Color3.fromRGB(109, 61, 61) or Color3.fromRGB(61, 61, 61),
-				ButtonColor = canCreate and Color3.fromRGB(199, 139, 139) or Color3.fromRGB(107, 107, 107),
+				BackgroundColor3 = canCreate and UiValues.NoButtonSec or UiValues.NoneButtonSec,
+				ButtonColor = canCreate and UiValues.NoButtonMain or UiValues.NoneButtonMain,
 				Interactable = canCreate,
 				onButtonClick = function()
 					handleResetInput()
@@ -154,8 +153,8 @@ local function CreateItemForm()
 				Position = UDim2.fromScale(0.75, 0.5),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Size = UDim2.fromScale(0.25, 0.5),
-				BackgroundColor3 = canCreate and Color3.fromRGB(18, 61, 90) or Color3.fromRGB(61, 61, 61),
-				ButtonColor = canCreate and Color3.fromRGB(50, 128, 184) or Color3.fromRGB(107, 107, 107),
+				BackgroundColor3 = canCreate and UiValues.YesButtonSec or UiValues.NoneButtonSec,
+				ButtonColor = canCreate and UiValues.YesButtonMain or UiValues.NoneButtonMain,
 				Interactable = canCreate,
 				onButtonClick = function()
 					handleCreateItem()

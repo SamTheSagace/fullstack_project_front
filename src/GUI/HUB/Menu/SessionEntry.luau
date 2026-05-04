@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 
 local e = React.createElement
 
@@ -15,6 +16,7 @@ type props = {
 
 local function SessionEntry(props: props)
 	local playerIds = SessionHelpers.getSessionPlayerIds(props.sessionData)
+	print(props.sessionData)
 	local ThumbType = Enum.ThumbnailType.HeadShot
 	local ThumbSize = Enum.ThumbnailSize.Size150x150
 
@@ -34,10 +36,11 @@ local function SessionEntry(props: props)
 	end
 
 	for playerIndex, userId in ipairs(playerIds) do
-		local plrAvatar, isReady = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize) -- you could use the declared id variable or simply enter it here, to showcase both I put what it would look like if you used the ID like this instead of defining in a variable
+		local plrAvatar = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize)
+		print("test", playerIndex, userId, plrAvatar)
 		playersChildren[`Avatar_{playerIndex}`] = e("ImageLabel", {
 			Size = UDim2.fromOffset(38, 38),
-			BackgroundColor3 = Color3.fromRGB(39, 55, 75),
+			BackgroundColor3 = UiValues.activeColor,
 			Image = plrAvatar,
 			ScaleType = Enum.ScaleType.Crop,
 		}, {
@@ -45,7 +48,7 @@ local function SessionEntry(props: props)
 				CornerRadius = UDim.new(1, 0),
 			}),
 			Stroke = e("UIStroke", {
-				Color = Color3.fromRGB(79, 102, 128),
+				Color = UiValues.MainGreenColor,
 				Thickness = 1,
 			}),
 		})
@@ -54,11 +57,11 @@ local function SessionEntry(props: props)
 	return e("Frame", {
 		LayoutOrder = props.index,
 		Size = UDim2.fromScale(1, 0.25),
-		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		BackgroundColor3 = UiValues.unactiveColor,
 		BackgroundTransparency = 1,
 	}, {
 		Stroke = e("UIStroke", {
-			Color = Color3.fromRGB(42, 62, 84),
+			Color = UiValues.MainGreenColor,
 			Thickness = 1,
 		}),
 		Padding = e("UIPadding", {
@@ -70,20 +73,21 @@ local function SessionEntry(props: props)
 		NameLabel = e("TextLabel", {
 			Text = SessionHelpers.getSessionName(props.sessionData, props.index),
 			Position = UDim2.fromScale(0, 0),
+			AnchorPoint = Vector2.new(0, 0),
 			Size = UDim2.fromScale(1, 0.2),
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
 			TextSize = 18,
-			TextColor3 = Color3.fromRGB(238, 243, 247),
+			TextColor3 = UiValues.activeText,
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}),
 		JoinButton = e("TextButton", {
 			Text = "Join",
-			Position = UDim2.fromScale(0.9, 0.5),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Size = UDim2.fromScale(0.1, 0.4),
-			BackgroundColor3 = Color3.fromRGB(79, 102, 128),
-			TextColor3 = Color3.fromRGB(238, 243, 247),
+			Position = UDim2.fromScale(1, 0.5),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Size = UDim2.fromScale(0.22, 0.7),
+			BackgroundColor3 = UiValues.unactiveColor,
+			TextColor3 = UiValues.unactiveText,
 			Font = Enum.Font.GothamBold,
 			TextSize = 16,
 			[React.Event.Activated] = handleJoinActivated,
@@ -97,7 +101,6 @@ local function SessionEntry(props: props)
 			AnchorPoint = Vector2.new(0, 1),
 			Size = UDim2.fromScale(1, 0.8),
 			BackgroundTransparency = 1,
-			ClipsDescendants = true,
 		}, playersChildren),
 	})
 end
