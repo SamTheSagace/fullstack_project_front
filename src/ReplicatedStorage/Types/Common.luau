@@ -38,7 +38,7 @@ export type Item = {
 export type Vote = {
 	item_id: number,
 	roblox_user_id: number,
-	vote: string,
+	value: string,
 }
 
 export type ListSessionsResponse = {

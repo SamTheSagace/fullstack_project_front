@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
 local ItemApi = require(ReplicatedStorage.Api.ItemApi)
+local SessionHelpers = require(ReplicatedStorage.Shared.SessionHelpers)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 
@@ -11,6 +12,7 @@ local ItemService = require(script.Parent:WaitForChild("ItemService"))
 
 local CommonTypes = require(ReplicatedStorage.Types.Common)
 type Item = CommonTypes.Item
+type Vote = CommonTypes.Vote
 
 local SessionStore = require(script.Parent.Parent:WaitForChild("Store"):WaitForChild("SessionStore"))
 local SessionNotifier = require(script.Parent.SessionNotifier)
@@ -44,6 +46,21 @@ local function canVote(player: Player): boolean
 	local membersLength: number = meta.members and #meta.members
 	local votesLength: number = currentItemResponse and currentItemResponse.votes and #currentItemResponse.votes
 	return votesLength == membersLength
+end
+
+local function getFinalValue(player: Player): number
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
+	local sessionId = playerState and playerState.sessionId
+	local meta = SessionStore.get(code)
+	local currentItemResponse: Item = ItemApi:GetItemBySessionIdAndPosition(sessionId, meta.currentItem.position)
+	local votes: { Vote } = currentItemResponse and currentItemResponse.votes or {}
+	local moyVotes = 0
+	for _, v in pairs(votes) do
+		moyVotes += tonumber(v.value)
+	end
+	moyVotes = moyVotes / #votes
+	return SessionHelpers.closestFibonacci(moyVotes)
 end
 
 local function canOwnerStartSession(code: string): (boolean, string?)
@@ -319,8 +336,9 @@ end
 
 function SessionService.canFinishVote(player: Player)
 	local canFinishVote = canVote(player)
+	local finalValue = getFinalValue(player)
 
-	remotes.canFinishVote:FireClient(player, canFinishVote)
+	remotes.canFinishVote:FireClient(player, { canFinishVote = canFinishVote, finalValue = finalValue })
 end
 
 function SessionService.handleNextItem(player: Player)
@@ -338,6 +356,10 @@ function SessionService.handleNextItem(player: Player)
 		Utils.fireError(player, "Not all players have voted on the current item", remotes)
 		return
 	end
+
+	local finalValue = getFinalValue(player)
+	local getMeta = SessionStore.get(code)
+	ItemApi:SaveFinalValue(getMeta.currentItem.id, finalValue)
 
 	SessionStore.update(code, function(meta)
 		if meta.phase ~= "playing" then

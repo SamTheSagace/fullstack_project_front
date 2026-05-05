@@ -23,6 +23,7 @@ local function SessionDuringUI(props: Props)
 	local nextItemEnable, setNextItemEnable = React.useState(false)
 	local isOwner = currentSession.hostUserId == game.Players.LocalPlayer.UserId
 	local canFinishVote, setCanFinishVote = React.useState(false)
+	local finalValue, setFinalValue = React.useState(0)
 
 	local showText, setShowText = React.useState(true)
 
@@ -55,6 +56,8 @@ local function SessionDuringUI(props: Props)
 				resetCardMenuRef.current()
 			end
 			setNextItemEnable(false)
+			setCanFinishVote(false)
+			setFinalValue(0)
 		end)
 		return function()
 			onSessionsReceived:Disconnect()
@@ -63,8 +66,9 @@ local function SessionDuringUI(props: Props)
 
 	React.useEffect(function()
 		local onCanFinishVoteReceived = canFinishVoteEvent.OnClientEvent:Connect(function(...)
-			local canFinish = ...
-			setCanFinishVote(canFinish)
+			local snapshot = ...
+			setCanFinishVote(snapshot.canFinishVote)
+			setFinalValue(snapshot.finalValue)
 		end)
 		return function()
 			onCanFinishVoteReceived:Disconnect()
@@ -109,7 +113,7 @@ local function SessionDuringUI(props: Props)
 			Size = UDim2.fromOffset(100, 50),
 			Position = UDim2.fromScale(0.9, 0.1),
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			Text = "Finish Vote",
+			Text = "Finish Vote (final value: " .. tostring(finalValue) .. ")",
 			BackgroundColor3 = Color3.fromRGB(1, 88, 181),
 			ButtonColor = Color3.fromRGB(0, 122, 255),
 			onButtonClick = handleFinishVote,

@@ -61,4 +61,20 @@ function ItemApi:DeleteItem(deleteItemInput: DeleteItemInput)
 	return HttpService:JSONDecode(response)
 end
 
+function ItemApi:SaveFinalValue(item_id: number, final_value: number)
+	local body = HttpService:JSONEncode({ final_value = tostring(final_value) })
+	local success, response = pcall(function()
+		return HttpService:PostAsync(
+			URL_ITEMS .. "update/" .. item_id .. "/",
+			body,
+			Enum.HttpContentType.ApplicationJson
+		)
+	end)
+	if not success then
+		warn("Failed to save final value:", response)
+		return nil
+	end
+	return HttpService:JSONDecode(response)
+end
+
 return ItemApi
