@@ -7,14 +7,22 @@ local e = React.createElement
 local endVote = ReplicatedStorage:WaitForChild("Events"):WaitForChild("endVote")
 local nextItem = ReplicatedStorage:WaitForChild("Events"):WaitForChild("nextItem")
 type Props = {
-	value: number,
+	localPlayer: Player,
 }
 local function VotedUI(props: Props)
 	local isVisible, setIsVisible = React.useState(false)
+
+	local myData, setMyData = React.useState(nil)
 	React.useEffect(function()
 		local onEndVote = endVote.OnClientEvent:Connect(function(players)
 			setIsVisible(true)
-			print(players)
+
+			for _, playerData in ipairs(players) do
+				if playerData.UserId == props.localPlayer.UserId then
+					setMyData(playerData)
+					break
+				end
+			end
 		end)
 		return function()
 			onEndVote:Disconnect()
@@ -28,10 +36,14 @@ local function VotedUI(props: Props)
 			onSessionsReceived:Disconnect()
 		end
 	end, {})
+	if not myData then
+		return nil
+	end
+
 	return e(Card, {
-		value = props.value,
-		selectedValue = props.value,
-		setSelectedValue = {},
+		value = myData.currentVote,
+		selectedValue = myData.currentVote,
+		setSelectedValue = function() end,
 		LayoutOrder = 1,
 		isFinished = true,
 		isVisible = isVisible,

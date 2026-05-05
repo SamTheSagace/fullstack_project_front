@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
@@ -10,8 +11,14 @@ local errorEvent = eventsFolder:WaitForChild("errorEvent")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 
 GUI()
-HeadBillboard()
+for _, player in Players:GetPlayers() do
+	HeadBillboard(player)
+end
 DataService:init()
+
+Players.PlayerAdded:Connect(function(player)
+	HeadBillboard(player)
+end)
 
 sessionState.OnClientEvent:Connect(function(snapshot)
 	print("Received session snapshot:", snapshot)

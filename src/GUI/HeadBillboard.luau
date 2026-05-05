@@ -1,13 +1,11 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local VotedUI = require(script.Parent.VotedUI)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 
-return function()
-	local player = Players.LocalPlayer
-	local character = player.Character or player.CharacterAdded:Wait()
+return function(localPlayer: Player)
+	local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 	local head = character:WaitForChild("Head")
 
 	local container: BillboardGui = Instance.new("BillboardGui")
@@ -18,7 +16,9 @@ return function()
 	container.Parent = head
 
 	local root = ReactRoblox.createRoot(container)
-	local app = React.createElement(VotedUI)
+	local app = React.createElement(VotedUI, {
+		localPlayer = localPlayer,
+	})
 
 	root:render(app)
 end

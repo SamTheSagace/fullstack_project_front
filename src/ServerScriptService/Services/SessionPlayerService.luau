@@ -52,19 +52,22 @@ function SessionPlayerService.clearPlayerSessionState(player: Player)
 	end)
 end
 
-function SessionPlayerService.getPlayersInSession(code: string): {
-	{
-		sessionCode: string?,
-		sessionId: number?,
-		isSeated: boolean,
-		isReady: boolean,
-		currentVote: number,
-	}
-}
+function SessionPlayerService.getPlayersInSession(code: string): { Player }
+	local list = {}
+	for _, player in ipairs(Players:GetPlayers()) do
+		if DataService:get(player, "session_code") == code then
+			table.insert(list, player)
+		end
+	end
+	return list
+end
+
+function SessionPlayerService.getPlayersDatasInSession(code: string)
 	local list = {}
 	for _, player in ipairs(Players:GetPlayers()) do
 		if DataService:get(player, "session_code") == code then
 			local playerData = SessionPlayerService.getPlayerSessionState(player)
+			playerData.UserId = player.UserId
 			table.insert(list, playerData)
 		end
 	end
