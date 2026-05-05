@@ -60,4 +60,21 @@ function SessionHelpers.extractSessionsFromArgs(...: any): { Session }
 	return SessionHelpers.normalizeSessions(payload)
 end
 
+function SessionHelpers.closestFibonacci(n: number): number
+	if n <= 0 then
+		return 0
+	end
+
+	local a, b = 0, 1
+	while b < n do
+		a, b = b, a + b
+	end
+
+	if (n - a) <= (b - n) then
+		return a
+	else
+		return b
+	end
+end
+
 return SessionHelpers
