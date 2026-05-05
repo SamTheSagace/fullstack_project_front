@@ -41,6 +41,7 @@ local sessionState = ensureRemoteEvent("sessionState")
 
 -- Votes events
 local confirmVote = ensureRemoteEvent("confirmVote")
+local endVote = ensureRemoteEvent("endVote")
 
 -- Item events
 local listItemsSessionId = ensureRemoteEvent("listItemsSessionId")
@@ -104,6 +105,10 @@ end)
 
 confirmVote.OnServerEvent:Connect(function(player, payload)
 	VotesService.confirmVote(player, payload)
+end)
+
+endVote.OnServerEvent:Connect(function(player, payload)
+	-- to do
 end)
 
 listItemsSessionId.OnServerEvent:Connect(function(player)

@@ -1,7 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
-local HubUI = require(StarterGui.GUI.HUB.HubUI)
 local SessionEntry = require(StarterGui.GUI.HUB.Menu.SessionEntry)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
