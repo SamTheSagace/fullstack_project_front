@@ -11,6 +11,7 @@ local CommonTypes = require(ReplicatedStorage.Types.Common)
 type Item = CommonTypes.Item
 
 local confirmVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("confirmVote")
+local canFinishVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("canFinishVote")
 
 type props = {
 	isVisible: boolean,
@@ -43,6 +44,7 @@ local function CardMenu(props: props)
 			robloxUserId = Players.LocalPlayer.UserId,
 			value = selectedValue,
 		})
+		canFinishVoteEvent:FireServer()
 	end
 
 	local cardsFrame = {

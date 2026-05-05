@@ -35,6 +35,17 @@ local function getSessionPhase(code: string): string
 	return "waiting"
 end
 
+local function canVote(player: Player): boolean
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
+	local sessionId = playerState and playerState.sessionId
+	local meta = SessionStore.get(code)
+	local currentItemResponse: Item = ItemApi:GetItemBySessionIdAndPosition(sessionId, meta.currentItem.position)
+	local membersLength: number = meta.members and #meta.members
+	local votesLength: number = currentItemResponse and currentItemResponse.votes and #currentItemResponse.votes
+	return votesLength == membersLength
+end
+
 local function canOwnerStartSession(code: string): (boolean, string?)
 	local players = SessionPlayerService.getPlayersInSession(code)
 	if #players == 0 then
@@ -291,6 +302,27 @@ function SessionService.handleStartSession(player: Player)
 	SessionNotifier.broadcastSessionState(code)
 end
 
+function SessionService.handleEndSession(player: Player)
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+	local code = playerState and playerState.sessionCode
+
+	if code == nil then
+		Utils.fireError(player, "You are not in a session", remotes)
+		return
+	end
+
+	SessionStore.update(code, function(meta)
+		meta.phase = "waiting"
+	end)
+	SessionNotifier.broadcastSessionState(code)
+end
+
+function SessionService.canFinishVote(player: Player)
+	local canFinishVote = canVote(player)
+
+	remotes.canFinishVote:FireClient(player, canFinishVote)
+end
+
 function SessionService.handleNextItem(player: Player)
 	local playerState = SessionPlayerService.getPlayerSessionState(player)
 	local code = playerState and playerState.sessionCode
@@ -301,11 +333,8 @@ function SessionService.handleNextItem(player: Player)
 		return
 	end
 
-	local getMeta = SessionStore.get(code)
-	local currentItemResponse: Item = ItemApi:GetItemBySessionIdAndPosition(sessionId, getMeta.currentItem.position)
-	local membersLength: number = getMeta.members and #getMeta.members
-	local votesLength: number = currentItemResponse and currentItemResponse.votes and #currentItemResponse.votes
-	if votesLength ~= membersLength then
+	local canFinishVote = canVote(player)
+	if not canFinishVote then
 		Utils.fireError(player, "Not all players have voted on the current item", remotes)
 		return
 	end

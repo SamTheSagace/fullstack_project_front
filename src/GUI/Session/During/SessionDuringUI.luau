@@ -10,6 +10,8 @@ local CommonTypes = require(ReplicatedStorage.Types.Common)
 type SessionSnapshot = CommonTypes.SessionSnapshot
 
 local nextItemEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("nextItem")
+local endSessionEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("endSession")
+local canFinishVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("canFinishVote")
 
 type Props = {
 	currentSession: SessionSnapshot,
@@ -20,6 +22,7 @@ local function SessionDuringUI(props: Props)
 	local resetCardMenuRef = React.useRef(nil)
 	local nextItemEnable, setNextItemEnable = React.useState(false)
 	local isOwner = currentSession.hostUserId == game.Players.LocalPlayer.UserId
+	local canFinishVote, setCanFinishVote = React.useState(false)
 
 	local showText, setShowText = React.useState(true)
 
@@ -43,7 +46,11 @@ local function SessionDuringUI(props: Props)
 
 	React.useEffect(function()
 		local onSessionsReceived = nextItemEvent.OnClientEvent:Connect(function(...)
-			setCurrentSession(...)
+			local snapshot = ...
+			setCurrentSession(snapshot)
+			if snapshot.currentItem == nil then
+				endSessionEvent:FireServer()
+			end
 			if resetCardMenuRef.current then
 				resetCardMenuRef.current()
 			end
@@ -51,6 +58,16 @@ local function SessionDuringUI(props: Props)
 		end)
 		return function()
 			onSessionsReceived:Disconnect()
+		end
+	end, {})
+
+	React.useEffect(function()
+		local onCanFinishVoteReceived = canFinishVoteEvent.OnClientEvent:Connect(function(...)
+			local canFinish = ...
+			setCanFinishVote(canFinish)
+		end)
+		return function()
+			onCanFinishVoteReceived:Disconnect()
 		end
 	end, {})
 
@@ -88,7 +105,7 @@ local function SessionDuringUI(props: Props)
 			onButtonClick = handleNextItem,
 		}) or nil,
 
-		finishVoteButton = isOwner and not showText and not nextItemEnable and e(CustomButton, {
+		finishVoteButton = isOwner and not showText and not nextItemEnable and canFinishVote and e(CustomButton, {
 			Size = UDim2.fromOffset(100, 50),
 			Position = UDim2.fromScale(0.9, 0.1),
 			AnchorPoint = Vector2.new(0.5, 0.5),
