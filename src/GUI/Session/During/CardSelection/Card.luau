@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local e = React.createElement
 
+local UiValues = require(ReplicatedStorage.Types.UiValues)
 type CardProps = {
 	value: number,
 	selectedValue: number?,
@@ -112,7 +113,7 @@ local function Card(props: CardProps)
 			Size = UDim2.fromScale(1, 1),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
-			BackgroundColor3 = Color3.fromRGB(127, 174, 218),
+			BackgroundColor3 = UiValues.activeColor,
 			Text = "",
 			AutoButtonColor = false,
 			ClipsDescendants = true,
@@ -136,7 +137,7 @@ local function Card(props: CardProps)
 			}),
 			Border = e("UIStroke", {
 				Thickness = 2,
-				Color = Color3.fromRGB(20, 78, 70),
+				Color = UiValues.MainGreenColor,
 				Enabled = true,
 				ApplyStrokeMode = "Border",
 			}),
@@ -145,8 +146,8 @@ local function Card(props: CardProps)
 				Size = UDim2.fromScale(1, 1),
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
-				TextSize = 20,
-				TextColor3 = Color3.fromRGB(0, 255, 221),
+				TextSize = 40,
+				TextColor3 = UiValues.activeText,
 			}),
 		}),
 	})

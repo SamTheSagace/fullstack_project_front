@@ -16,7 +16,6 @@ type props = {
 
 local function SessionEntry(props: props)
 	local playerIds = SessionHelpers.getSessionPlayerIds(props.sessionData)
-	print(props.sessionData)
 	local ThumbType = Enum.ThumbnailType.HeadShot
 	local ThumbSize = Enum.ThumbnailSize.Size150x150
 
@@ -37,7 +36,6 @@ local function SessionEntry(props: props)
 
 	for playerIndex, userId in ipairs(playerIds) do
 		local plrAvatar = Players:GetUserThumbnailAsync(userId, ThumbType, ThumbSize)
-		print("test", playerIndex, userId, plrAvatar)
 		playersChildren[`Avatar_{playerIndex}`] = e("ImageLabel", {
 			Size = UDim2.fromOffset(38, 38),
 			BackgroundColor3 = UiValues.activeColor,

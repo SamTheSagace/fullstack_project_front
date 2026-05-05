@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local SessionPlayerService = require(script.Parent.SessionPlayerService)
 local SessionApi = require(ReplicatedStorage.Api.SessionApi)
 local Utils = require(ReplicatedStorage.Shared.Utils)
 
@@ -39,11 +40,20 @@ function VoteService.confirmVote(
 		return
 	end
 
+	local playerState = SessionPlayerService.getPlayerSessionState(player)
+
 	SessionApi:CreateUpdateVote({
 		item_id = payload.itemId,
 		roblox_user_id = payload.robloxUserId,
 		value = payload.value,
 	})
+	SessionPlayerService.setPlayerSessionState(
+		player,
+		playerState.sessionCode,
+		playerState.sessionId,
+		playerState.isSeated,
+		payload.value
+	)
 end
 
 return VoteService

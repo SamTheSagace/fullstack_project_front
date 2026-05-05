@@ -6,7 +6,6 @@ local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 
 return function()
-	print("Mounting UI")
 	local player = Players.LocalPlayer
 	local playerGui = player:WaitForChild("PlayerGui")
 	local container: ScreenGui = Instance.new("ScreenGui")

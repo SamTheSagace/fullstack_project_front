@@ -44,6 +44,7 @@ local canFinishVote = ensureRemoteEvent("canFinishVote")
 
 -- Votes events
 local confirmVote = ensureRemoteEvent("confirmVote")
+local endVote = ensureRemoteEvent("endVote")
 
 -- Item events
 local listItemsSessionId = ensureRemoteEvent("listItemsSessionId")
@@ -59,6 +60,7 @@ SessionService.init({
 	toggleReady = toggleReady,
 	startSession = startSession,
 	nextItem = nextItem,
+	endVote = endVote,
 	endSession = endSession,
 	canFinishVote = canFinishVote,
 })
@@ -122,6 +124,10 @@ end)
 
 confirmVote.OnServerEvent:Connect(function(player, payload)
 	VotesService.confirmVote(player, payload)
+end)
+
+endVote.OnServerEvent:Connect(function(player)
+	SessionService.endVote(player)
 end)
 
 listItemsSessionId.OnServerEvent:Connect(function(player)

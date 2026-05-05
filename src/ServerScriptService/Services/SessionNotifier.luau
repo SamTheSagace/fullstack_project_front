@@ -51,7 +51,7 @@ function SessionNotifier.broadcastSessionState(code: string)
 	for _, player in ipairs(SessionPlayerService.getPlayersInSession(code)) do
 		local isReady = DataService:get(player, "is_ready") == true
 		local isSeated = DataService:get(player, "is_seated") == true
-
+		local currentVote = DataService:get(player, "current_vote")
 		if isReady then
 			readyCount += 1
 		end
@@ -65,6 +65,7 @@ function SessionNotifier.broadcastSessionState(code: string)
 			participate = isSeated,
 			isReady = isReady,
 			isSeated = isSeated,
+			currentVote = currentVote,
 		})
 	end
 

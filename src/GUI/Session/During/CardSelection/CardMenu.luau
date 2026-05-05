@@ -17,21 +17,23 @@ type props = {
 	isVisible: boolean,
 	currentItem: Item,
 	resetCardMenu: (resetFn: () -> ()) -> (),
+	selectedValue: number,
+	setSelectedValue: (value: number | nil) -> (),
 }
 
 local function CardMenu(props: props)
 	local numbersList = { 1, 2, 3, 5, 8, 13 }
 	-- This component make an array of cards based on a list of number, to select one from it
-	local selectedValue, setSelectedValue = React.useState(nil)
+
 	local Finished, setFinished = React.useState(false)
 	local ItemShow, setItemShow = React.useState(false)
 	local VoteShow, setVoteShow = React.useState(false)
-	local isInteractable = selectedValue ~= nil
+	local isInteractable = props.selectedValue ~= nil
 
 	React.useEffect(function()
 		if props.resetCardMenu then
 			props.resetCardMenu(function()
-				setSelectedValue(nil)
+				props.setSelectedValue(nil)
 				setFinished(false)
 				setItemShow(false)
 			end)
@@ -42,7 +44,7 @@ local function CardMenu(props: props)
 		confirmVoteEvent:FireServer({
 			itemId = props.currentItem.id,
 			robloxUserId = Players.LocalPlayer.UserId,
-			value = selectedValue,
+			value = props.selectedValue,
 		})
 		canFinishVoteEvent:FireServer()
 	end
@@ -59,8 +61,8 @@ local function CardMenu(props: props)
 	for index, value in ipairs(numbersList) do
 		cardsFrame[`Card_{index}`] = e(Card, {
 			value = value,
-			selectedValue = selectedValue,
-			setSelectedValue = setSelectedValue,
+			selectedValue = props.selectedValue,
+			setSelectedValue = props.setSelectedValue,
 			LayoutOrder = index,
 			isFinished = Finished,
 		})
@@ -72,6 +74,7 @@ local function CardMenu(props: props)
 			Position = UDim2.fromScale(0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundTransparency = 1,
+			ZIndex = 5,
 		}, {
 			Frame = e("Frame", {
 				Size = UDim2.fromScale(0.2, 1),

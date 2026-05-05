@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SessionPlayerService = require(script.Parent.SessionPlayerService)
@@ -154,7 +155,7 @@ local function joinLocalSession(player: Player, code: string, isOwner: boolean):
 
 	local meta = SessionStore.get(code)
 	local sessionId = meta and meta.sessionId
-	SessionPlayerService.setPlayerSessionState(player, code, sessionId, false)
+	SessionPlayerService.setPlayerSessionState(player, code, sessionId, false, nil)
 	local teleported = RoomService.teleportPlayerToSessionRoom(player, code, isOwner)
 	if not teleported then
 		SessionPlayerService.clearPlayerSessionState(player)
@@ -457,4 +458,20 @@ function SessionService.handlePlayerRemoving(player: Player)
 	SessionNotifier.broadcastSessionState(code)
 end
 
+function SessionService.endVote(player: Player)
+	local code = getPlayerSessionCode(player)
+	if code == nil then
+		return
+	end
+
+	local playersData = SessionPlayerService.getPlayersDatasInSession(code)
+
+	for _, playerData in ipairs(playersData) do
+		local localPlayer = Players:GetPlayerByUserId(playerData.UserId)
+
+		if localPlayer then
+			remotes.endVote:FireClient(localPlayer, playersData)
+		end
+	end
+end
 return SessionService

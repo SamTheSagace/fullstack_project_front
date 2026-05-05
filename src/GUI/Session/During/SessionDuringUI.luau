@@ -10,6 +10,7 @@ local CommonTypes = require(ReplicatedStorage.Types.Common)
 type SessionSnapshot = CommonTypes.SessionSnapshot
 
 local nextItemEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("nextItem")
+local endVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("endVote")
 local endSessionEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("endSession")
 local canFinishVoteEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("canFinishVote")
 
@@ -24,7 +25,7 @@ local function SessionDuringUI(props: Props)
 	local isOwner = currentSession.hostUserId == game.Players.LocalPlayer.UserId
 	local canFinishVote, setCanFinishVote = React.useState(false)
 	local finalValue, setFinalValue = React.useState(0)
-
+	local selectedValue, setSelectedValue = React.useState(nil)
 	local showText, setShowText = React.useState(true)
 
 	local function handleNextItem()
@@ -32,6 +33,7 @@ local function SessionDuringUI(props: Props)
 	end
 
 	local function handleFinishVote()
+		endVoteEvent:FireServer()
 		setNextItemEnable(true)
 	end
 
@@ -94,6 +96,8 @@ local function SessionDuringUI(props: Props)
 		CardMenu = e(CardMenu, {
 			isVisible = not showText and not nextItemEnable,
 			currentItem = currentSession.currentItem,
+			selectedValue = selectedValue,
+			setSelectedValue = setSelectedValue,
 			resetCardMenu = function(resetFn)
 				resetCardMenuRef.current = resetFn
 			end,
