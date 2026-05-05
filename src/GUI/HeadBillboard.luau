@@ -5,8 +5,7 @@ local VotedUI = require(script.Parent.VotedUI)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 
-return function(value: number)
-	print("test", value)
+return function()
 	local player = Players.LocalPlayer
 	local character = player.Character or player.CharacterAdded:Wait()
 	local head = character:WaitForChild("Head")
@@ -19,9 +18,7 @@ return function(value: number)
 	container.Parent = head
 
 	local root = ReactRoblox.createRoot(container)
-	local app = React.createElement(VotedUI, {
-		value = value,
-	})
+	local app = React.createElement(VotedUI)
 
 	root:render(app)
 end

@@ -146,8 +146,8 @@ local function Card(props: CardProps)
 				Size = UDim2.fromScale(1, 1),
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
-				TextSize = 20,
-				TextColor3 = UiValues.activeColor,
+				TextSize = 40,
+				TextColor3 = UiValues.activeText,
 			}),
 		}),
 	})

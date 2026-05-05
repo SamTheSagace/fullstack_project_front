@@ -456,5 +456,13 @@ function SessionService.handlePlayerRemoving(player: Player)
 	SessionPlayerService.syncSessionSeatingState(code)
 	SessionNotifier.broadcastSessionState(code)
 end
-
+function SessionService.endVote(player: Player)
+	local code = getPlayerSessionCode(player)
+	if code == nil then
+		return
+	end
+	local players = SessionPlayerService.getPlayersInSession(code)
+	print(players)
+	remotes.endVote:FireClient(players)
+end
 return SessionService

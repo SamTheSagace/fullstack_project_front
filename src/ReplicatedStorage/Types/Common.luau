@@ -51,7 +51,7 @@ export type SessionSnapshotMember = {
 	participate: boolean,
 	isReady: boolean,
 	isSeated: boolean,
-	hasVoted: boolean,
+	currentVote: number,
 }
 
 export type SessionSnapshot = {

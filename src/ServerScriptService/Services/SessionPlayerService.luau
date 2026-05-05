@@ -18,7 +18,13 @@ function SessionPlayerService.setPlayerReadyState(player: Player, isReady: boole
 	end)
 end
 
-function SessionPlayerService.setPlayerSessionState(player: Player, code: string, id: number, isSeated: boolean)
+function SessionPlayerService.setPlayerSessionState(
+	player: Player,
+	code: string,
+	id: number,
+	isSeated: boolean,
+	currentVote: number | nil
+)
 	DataService:update(player, "session_code", function()
 		return code
 	end)
@@ -28,7 +34,7 @@ function SessionPlayerService.setPlayerSessionState(player: Player, code: string
 	SessionPlayerService.setPlayerSeatedState(player, isSeated)
 	SessionPlayerService.setPlayerReadyState(player, false)
 	DataService:update(player, "current_vote", function()
-		return nil
+		return currentVote
 	end)
 end
 
@@ -36,9 +42,9 @@ function SessionPlayerService.clearPlayerSessionState(player: Player)
 	DataService:update(player, "session_code", function()
 		return nil
 	end)
-    DataService:update(player, "session_id", function()
-        return nil
-    end)
+	DataService:update(player, "session_id", function()
+		return nil
+	end)
 	SessionPlayerService.setPlayerSeatedState(player, false)
 	SessionPlayerService.setPlayerReadyState(player, false)
 	DataService:update(player, "current_vote", function()
@@ -46,11 +52,20 @@ function SessionPlayerService.clearPlayerSessionState(player: Player)
 	end)
 end
 
-function SessionPlayerService.getPlayersInSession(code: string): { Player }
+function SessionPlayerService.getPlayersInSession(code: string): {
+	{
+		sessionCode: string?,
+		sessionId: number?,
+		isSeated: boolean,
+		isReady: boolean,
+		currentVote: number,
+	}
+}
 	local list = {}
 	for _, player in ipairs(Players:GetPlayers()) do
 		if DataService:get(player, "session_code") == code then
-			table.insert(list, player)
+			local playerData = SessionPlayerService.getPlayerSessionState(player)
+			table.insert(list, playerData)
 		end
 	end
 	return list
@@ -61,12 +76,14 @@ function SessionPlayerService.getPlayerSessionState(player: Player): {
 	sessionId: number?,
 	isSeated: boolean,
 	isReady: boolean,
+	currentVote: number,
 }
 	return {
 		sessionCode = DataService:get(player, "session_code"),
 		sessionId = DataService:get(player, "session_id"),
 		isSeated = DataService:get(player, "is_seated") or false,
 		isReady = DataService:get(player, "is_ready") or false,
+		currentVote = DataService:get(player, "current_vote") or nil,
 	}
 end
 
